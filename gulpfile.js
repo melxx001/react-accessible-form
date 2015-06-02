@@ -1,12 +1,17 @@
 'use strict'
 
+var argv = require('yargs').argv
+process.env.DEBUG = (Boolean(argv.DEBUG) === true) ? "react-accessible-forms:*" : ""
+
 var gulp = require('gulp')
 var babel = require("gulp-babel")
 var react = require("gulp-react")
 var clean = require('gulp-clean')
 var nodemon = require('gulp-nodemon')
 var webpack = require('gulp-webpack')
-var runSequence = require('run-sequence');
+var uglify = require('gulp-uglify')
+var uglify = require('gulp-uglify')
+var runSequence = require('run-sequence')
 var debug = require('debug')("react-accessible-forms:gulp")
 
 gulp.task('watch', () => {
@@ -14,16 +19,16 @@ gulp.task('watch', () => {
   nodemon({
     script: './examples/app.js',
     "verbose": true,
-  	"env": {
-  		"NODE_ENV": "development",
-  		"NODE_DEBUG" : "react-accessible-forms:*"
+  	env: {
+      "NODE_ENV": "development",
+  		"DEBUG": process.env.DEBUG
   	},
   	nodeArgs: [
   		'--debug=5858'
   	],
     ext: 'js jsx',
     "ignore": ["lib/*", "node_modules/*", "gulpfile.js", "*.json" , "examples/public/*"],
-    stdout: false
+    stdout: true
   }).on('restart', () => {
     runSequence('webpack', 'swagger')
   })
@@ -47,8 +52,15 @@ gulp.task("webpack", ['build'], function() {
           output: {
               path: __dirname + "/examples/public",
               filename: "bundle.js"
+          },
+          module: {
+            loaders: [
+              {test: /\.json$/, loader: "json-loader"}
+            ],
+            noParse: ".md,LICENSE"
           }
         }))
+        //.pipe(uglify())
         .pipe(gulp.dest('examples/public/'))
 })
 

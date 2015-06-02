@@ -1,6 +1,7 @@
 'use strict'
 var express = require('express')
 var app = require('../lib/index.js')
+var debug = require('debug')("react-accessible-forms:app")
 var server = express()
 // var swaggerTools = require('swagger-tools')
 // var fs = require('fs')
@@ -10,7 +11,6 @@ var server = express()
     explicitArray: false,
     mergeAttrs: true
 })*/
-var debug = require('debug')("react-accessible-forms:app")
 server.use(express.static(__dirname + '/public'));
 server.set('views', __dirname + '/views');
 server.set('view engine', 'jsx');
@@ -22,6 +22,6 @@ server.get("/", function(req, res) {
 	res.render('index', json)
 });
 
-server.listen(2000)
-console.log("Server is listening")
 debug("Server is listening")
+
+server.listen(2000)

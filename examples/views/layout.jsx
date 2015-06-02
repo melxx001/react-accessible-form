@@ -5,7 +5,7 @@ var DefaultLayout = React.createClass({
     return (
       <html>
         <head>
-        	<title>{this.props.title}</title>
+        	<title>Form Test</title>
         	<script src="/bundle.js"></script>
         </head>
         <body>{this.props.children}</body>
