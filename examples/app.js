@@ -2,7 +2,7 @@
 var express = require('express')
 var app = require('../lib/index.js')
 var server = express()
-var swaggerTools = require('swagger-tools')
+// var swaggerTools = require('swagger-tools')
 // var fs = require('fs')
 // var path = require('path')
 // var xml2js = require('xml2js')
@@ -19,8 +19,6 @@ server.engine('jsx', require('express-react-views').createEngine({ beautify: tru
 
 server.get("/", function(req, res) {
 	var json = require(__dirname + '/swagger.json')
-	debugger
-	console.log(json)
 	res.render('index', json)
 });
 

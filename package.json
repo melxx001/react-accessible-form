@@ -30,14 +30,11 @@
   "homepage": "https://github.com/melxx001/react-accessible-form",
   "dependencies": {
     "debug": "^2.2.0",
-    "generate-schema": "^2.1.1",
     "react": "^0.13.3",
-    "react-bootstrap": "^0.23.0",
-    "swagger-tools": "^0.8.7",
-    "xml2js": "^0.4.8"
+    "react-bootstrap": "^0.23.0"
   },
   "devDependencies": {
-    "browserify": "^10.2.3",
+    "generate-schema": "^2.1.1",
     "express": "^4.12.4",
     "express-react-views": "^0.8.1",
     "gulp": "^3.8.11",
@@ -45,9 +42,9 @@
     "gulp-clean": "^0.3.1",
     "gulp-nodemon": "^2.0.3",
     "gulp-react": "^3.0.1",
-    "gulp-reactify": "^3.0.1",
     "gulp-webpack": "^1.4.0",
     "run-sequence": "^1.1.0",
-    "vinyl-source-stream": "^1.1.0"
+    "swagger-tools": "^0.8.7",
+    "xml2js": "^0.4.8"
   }
 }
