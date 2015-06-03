@@ -6,9 +6,13 @@ var DefaultLayout = React.createClass({
       <html>
         <head>
         	<title>Form Test</title>
-        	<script src="/bundle.js"></script>
         </head>
-        <body>{this.props.children}</body>
+        <body>
+          <div id="content" dangerouslySetInnerHTML={{__html: this.props.content}}></div>
+          <script src="/common.js"></script>
+          <script src="/index-bundle.js"></script>
+          <script src="/client-bundle.js"></script>
+        </body>
       </html>
     );
   }

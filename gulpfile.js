@@ -12,6 +12,7 @@ var webpack = require('gulp-webpack')
 var uglify = require('gulp-uglify')
 var uglify = require('gulp-uglify')
 var runSequence = require('run-sequence')
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin")
 var debug = require('debug')("react-accessible-forms:gulp")
 
 gulp.task('watch', () => {
@@ -30,13 +31,13 @@ gulp.task('watch', () => {
     "ignore": ["lib/*", "node_modules/*", "gulpfile.js", "*.json" , "examples/public/*"],
     stdout: true
   }).on('restart', () => {
-    runSequence('webpack', 'swagger')
+    runSequence('webpack', 'clientjs', 'swagger')
   })
 })
 
 gulp.task('default', () => {
   debug("Default task...")
-  runSequence('webpack', 'swagger', 'watch')
+  runSequence('webpack', 'clientjs', 'swagger', 'watch')
 })
 
 gulp.task('swagger', () => {
@@ -45,20 +46,38 @@ gulp.task('swagger', () => {
     .pipe(gulp.dest('examples/public/'));
 })
 
+gulp.task('clientjs', () => {
+  debug("Added clientjs.json to public directory...")
+  /*return gulp.src('examples/client.js')
+    .pipe(react())
+    .pipe(babel())
+    .pipe(gulp.dest('examples/public/'));*/
+})
+
 gulp.task("webpack", ['build'], function() {
     return gulp.src('lib/index.js')
         .pipe(webpack({
-          entry: "./lib",
+          resolve: {
+            extensions: ['', '.js', ".jsx"]
+          },
+          entry: {
+            index: "./lib/index.js",
+            client: "./examples/client.jsx"
+          },
           output: {
               path: __dirname + "/examples/public",
-              filename: "bundle.js"
+              filename: "[name]-bundle.js"
           },
           module: {
             loaders: [
-              {test: /\.json$/, loader: "json-loader"}
+              {test: /\.json$/, loader: "json-loader"},
+              {test: /\.jsx$/, loader: "jsx-loader"}
             ],
             noParse: ".md,LICENSE"
-          }
+          },
+          plugins: [
+            new CommonsChunkPlugin('common.js')
+          ]
         }))
         //.pipe(uglify())
         .pipe(gulp.dest('examples/public/'))
