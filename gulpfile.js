@@ -31,13 +31,13 @@ gulp.task('watch', () => {
     "ignore": ["lib/*", "node_modules/*", "gulpfile.js", "*.json" , "example/public/*", "example/build/*"],
     stdout: true
   }).on('restart', () => {
-    runSequence('main', 'lib', 'App', 'swagger', 'swagger-tools')
+    runSequence('App', 'main', 'lib', 'swagger', 'swagger-tools')
   })
 })
 
 gulp.task('default', () => {
   debug("Default task...")
-  runSequence('main', 'lib', 'App', 'swagger', 'swagger-tools', 'watch')
+  runSequence('App', 'main', 'lib', 'swagger', 'swagger-tools', 'watch')
 })
 
 gulp.task("lib", ['clean-lib'], () => {
