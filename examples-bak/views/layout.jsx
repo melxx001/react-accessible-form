@@ -9,9 +9,8 @@ var DefaultLayout = React.createClass({
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: this.props.content}}></div>
-          <script src="/common.js"></script>
-          <script src="/index-bundle.js"></script>
-          <script src="/client-bundle.js"></script>
+          <script src={this.props.commonJs}/>
+          <script src={this.props.clientJs}/>
         </body>
       </html>
     );

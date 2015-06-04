@@ -32,13 +32,11 @@
   "dependencies": {
     "debug": "^2.2.0",
     "react": "^0.13.3",
-    "react-bootstrap": "^0.23.0",
-    "z-schema": "^3.10.2"
+    "react-bootstrap": "^0.23.0"
   },
   "devDependencies": {
     "express": "^4.12.4",
     "express-react-views": "^0.8.1",
-    "generate-schema": "^2.1.1",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
     "gulp-clean": "^0.3.1",
@@ -48,11 +46,9 @@
     "gulp-webpack": "^1.4.0",
     "json-loader": "^0.5.2",
     "jsx-loader": "^0.13.2",
-    "node-libs-browser": "^0.5.2",
     "run-sequence": "^1.1.0",
     "swagger-tools": "^0.8.7",
     "webpack": "^1.9.10",
-    "xml2js": "^0.4.8",
     "yargs": "^3.10.0"
   }
 }
