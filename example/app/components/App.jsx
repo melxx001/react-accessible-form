@@ -1,6 +1,5 @@
-var React = require('react/addons');
-var Form = require('../../lib');
-
+var React = require('react/addons')
+var Form = require('../../lib')
 
 var App = React.createClass({
       componentDidMount: function () {
@@ -13,7 +12,6 @@ var App = React.createClass({
           </div>
         )
       }
-  });
+  })
 
-/* Module.exports instead of normal dom mounting */
-module.exports = App;
+module.exports = App

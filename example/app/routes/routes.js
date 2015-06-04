@@ -8,6 +8,6 @@ module.exports = function(app) {
 		var html = React.renderToStaticMarkup(React.createElement(App))
 		debug("Getting '/'... html: ", html)
 	    res.render('index', {content: html})
-	});
+	})
 
-};
+}

@@ -1,26 +1,51 @@
 var React = require('react')
-//var swaggerTools = require('swagger-tools')
+//var swaggerTools = require('../swaggertools')
+var tv4 = require('tv4')
+var zSchema = require('z-schema')
 
 var Input = React.createClass({
 	handleChange: function (event) {
+		var schema = require('../example/swagger.json')
+
 		console.log('change')
-		//var spec = swaggerTools.specs.v2;
-		/*var parent = this;
-		spec.validateModel(JSON.parse(this.props.schema), '#/definitions/Expenses', {
-			id: this.props.id,
-			sequence: this.props.sequence,
-			formFields: [ event.target.value ]
+		/*var valid = tv4.validate({ids: '10'}, schema)
+		console.log(valid)
+		if(!valid && tv4.error){
+			this.setState({ validationError: tv4.error.message })
+		}
+
+		var validator = new zSchema()
+		
+		valid = validator.validate({
+			id: '10',
+			sequence: 1,
+			ctrlType: 'edit',
+			dataType: 'CHAR',
+			label: 'test'
+		}, schema)
+		console.log(valid)
+		if(!valid){
+			var error = validator.getLastError();
+			//this.setState({ validationError: JSON.stringify(error) })
+		}*/
+
+		var spec = SwaggerTools.specs.v2;
+		var parent = this;
+		//debugger;
+		spec.validateModel(schema, '#/definitions/Expenses', {
+			id: event.target.value,
+			sequence: parseInt(event.target.value),
+			ctrlType: event.target.value
 		}, function (err, result) {
-			debugger;
 		    parent.setState({validationError: ''});
-		    if (result.errors) {
+		    if (result && result.errors) {
 		        result.errors.forEach(function (error) {
 		            if (error.path[0] === parent.props.field) {
 		                parent.setState({validationError: error.message});
 		            }
 		        });
 		    }
-		});*/
+		});
 	},
 	getInitialState: function () {
 	    return {
@@ -38,13 +63,15 @@ var Input = React.createClass({
 	}
 });
 
+
 var Form = React.createClass({
   //var formData = createForm();
   render: function() {
     return (
     	<div> 
-        	<Input schema={this.props} type="text" label="Expense Type1" id="id-1" sequence="1" />
-        	<Input schema={this.props} type="text" label="Expense Type2" id="id-2" sequence="2" />
+        	<Input schema={this.props} type="text" label="Expense Type1" id="id-1" sequence="1" field="id" />
+        	<Input schema={this.props} type="text" label="Expense Type2" id="id-2" sequence="2" field="sequence" />
+        	<Input schema={this.props} type="text" label="Expense Type2" id="id-2" sequence="2" field="ctrlType" />
         </div>
       
     );

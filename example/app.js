@@ -11,12 +11,12 @@ var server = express()
     explicitArray: false,
     mergeAttrs: true
 })*/
-server.use(express.static(__dirname + '/public'));
-server.set('views', __dirname + '/views');
-server.set('view engine', 'jsx');
-server.engine('jsx', require('express-react-views').createEngine({ beautify: true }));
+server.use(express.static(__dirname + '/public'))
+server.set('views', __dirname + '/views')
+server.set('view engine', 'jsx')
+server.engine('jsx', require('express-react-views').createEngine({ beautify: true }))
 
-require('./app/routes/routes.js')(server);
+require('./app/routes/routes.js')(server)
 
 debug("Server is listening")
 

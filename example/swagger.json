@@ -40,24 +40,10 @@
     },
     "definitions": {
         "Expenses": {
-            "properties":{
-                "formFields": {
-                    "type":"array",
-                    "items": { 
-                      "$ref": "#/definitions/Field" 
-                    },
-                   "description": "Expense form fields"
-                }
-            },
-            "additionalProperties" : {
-                "$ref" : "#/definitions/AdminAccess"
-            }
-        },
-        "Field": {
-            "type": "object",
             "properties": {
                 "id": {
-                    "type" : "string"
+                    "type" : "string",
+                    "minLength": 3
                 },
                 "sequence": {
                     "type": "integer",
@@ -65,8 +51,8 @@
                     "default": 0
                 },
                 "ctrlType": {
-                    "type": "integer",
-                    "format": "int32"
+                    "type" : "string",
+                    "maxLength": 5
                 },
                 "maxLength": {
                     "type": "integer",

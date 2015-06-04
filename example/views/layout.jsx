@@ -1,4 +1,4 @@
-var React = require('react');
+var React = require('react')
 
 var DefaultLayout = React.createClass({
   render: function() {
@@ -10,11 +10,12 @@ var DefaultLayout = React.createClass({
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: this.props.content}}></div>
           <script src="/common.js"></script>
+          <script src="/swaggertools.js"></script>
           <script src="/main.js"></script>
         </body>
       </html>
-    );
+    )
   }
-});
+})
 
-module.exports = DefaultLayout;
+module.exports = DefaultLayout

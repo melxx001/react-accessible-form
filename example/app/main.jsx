@@ -1,6 +1,4 @@
-var React = require('react/addons');
-var App = require('../build/App');
-window.React = React
-var mountNode = document.getElementById("content");
+var React = require('react/addons')
+var App = require('../build/App')
 
-React.render(React.createElement(App), mountNode);
+React.render(React.createElement(App), document.getElementById("content"))

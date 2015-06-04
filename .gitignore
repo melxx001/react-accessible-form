@@ -1,6 +1,7 @@
 /npm-debug.log
 *.bak
-/examples/public
-/examples/concur.*
-/node_modules
 
+/node_modules
+*~
+
+/example/concur.*
