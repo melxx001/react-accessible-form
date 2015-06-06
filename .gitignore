@@ -4,4 +4,5 @@
 /node_modules
 *~
 /example/build
-/example/concur.*
+/example/**/concur.*
+/swaggertools

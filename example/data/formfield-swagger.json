@@ -1,0 +1,142 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Example API",
+        "description": "Test API",
+        "version": "1.0"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "basePath": "/api/test",
+    "paths": {
+        "/expenses": {
+            "get": {
+                "description": "return expense form fields",
+                "tags": [
+                    "Expense"
+                ],
+                "x-swagger-router-controller": "expenses",
+                "operationId": "getFormFields",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful request.",
+                        "schema": {
+                            "$ref": "#/definitions/formDef"
+                        }
+                    },
+                    "default": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "formDef": {
+            "type": "object",
+            "description": "An explanation about the purpose of this instance.",
+            "properties": {
+                "Controls": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "title": "Controls schema.",
+                    "description": "An explanation about the purpose of this instance.",
+                    "properties": {
+                        "-Key": {
+                            "type": "string",
+                            "description": "An explanation about the purpose of this instance.",
+                        },
+                        "Control": {
+                            "type": "array",
+                            "minItems": 1,
+                            "uniqueItems": false,
+                            "description": "An explanation about the purpose of this instance.",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": true,
+                                "description": "An explanation about the purpose of this instance.",
+                                "properties": {
+                                    "-Key": {
+                                        "type": "string",
+                                        "title": "-Key",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "Id": {
+                                        "type": "string",
+                                        "title": "Id",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "Sequence": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "Sequence",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "CtrlType": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "CtrlType",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "MaxLength": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "MaxLength",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "DataType": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "DataType",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "Width": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "Width",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "Label": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "Label",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    },
+                                    "Required": {
+                                        "type": "string",
+                                        "minLength": 1,
+                                        "title": "Required",
+                                        "description": "An explanation about the purpose of this instance.",
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "Control"
+                    ]
+                }
+            },
+            "required": [
+                "Controls"
+            ]
+        },
+        "Error": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message"
+            ]
+        }
+    }
+}

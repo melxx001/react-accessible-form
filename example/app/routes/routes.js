@@ -6,7 +6,6 @@ module.exports = function(app) {
 
 	app.get('/', function(req, res){
 		var html = React.renderToStaticMarkup(React.createElement(App))
-		debug("Getting '/'... html: ", html)
 	    res.render('index', {content: html})
 	})
 

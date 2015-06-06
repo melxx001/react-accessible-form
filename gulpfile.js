@@ -8,11 +8,8 @@ var babel = require("gulp-babel")
 var react = require("gulp-react")
 var clean = require('gulp-clean')
 var nodemon = require('gulp-nodemon')
-var webpack = require('gulp-webpack')
-var uglify = require('gulp-uglify')
-var uglify = require('gulp-uglify')
+var webpack = require('webpack')
 var runSequence = require('run-sequence')
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin")
 var debug = require('debug')("react-accessible-forms:gulp")
 
 gulp.task('watch', () => {
@@ -31,13 +28,13 @@ gulp.task('watch', () => {
     "ignore": ["lib/*", "node_modules/*", "gulpfile.js", "*.json" , "example/public/*", "example/build/*"],
     stdout: true
   }).on('restart', () => {
-    runSequence('App', 'main', 'lib', 'swagger', 'swagger-tools')
+    runSequence('App', 'main', 'lib')
   })
 })
 
 gulp.task('default', () => {
   debug("Default task...")
-  runSequence('App', 'main', 'lib', 'swagger', 'swagger-tools', 'watch')
+  runSequence('App', 'main', 'lib', 'watch')
 })
 
 gulp.task("lib", ['clean-lib'], () => {
@@ -49,12 +46,7 @@ gulp.task("lib", ['clean-lib'], () => {
 })
 
 gulp.task('main', ['clean-public'], function () {
-    gulp.src('example/app/main.jsx')
-        /*.pipe(react())
-        .pipe(babel())
-        .pipe(gulp.dest('./example/public/'))*/
-
-        .pipe(webpack({
+    webpack({
           resolve: {
             extensions: ['', '.js', ".jsx"]
           },
@@ -68,17 +60,24 @@ gulp.task('main', ['clean-public'], function () {
           module: {
             loaders: [
               {test: /\.json$/, loader: "json-loader"},
-              {test: /\.jsx$/, loader: "jsx-loader"}
-            ],
-            noParse: ".md,LICENSE"
+              {test: /\.js$/, loader: "jsx-loader?harmony"}
+            ]
           },
           plugins: [
-            new CommonsChunkPlugin('common.js')
+            /*new webpack.optimize.UglifyJsPlugin({
+                mangle: {
+                    except: ['$super', '$', 'exports', 'require']
+                },
+                compress: {
+                    warnings: false
+                }
+            }),
+            new webpack.optimize.DedupePlugin(),*/
+            new webpack.optimize.CommonsChunkPlugin('common','common.js')
           ]
-        }))
-        //.pipe(uglify())
-        .pipe(gulp.dest('example/public/'))
-
+        },function(err, stats){
+          debug(err ? err : "no errors");
+        })
 })
 
 gulp.task("App", ['clean-build'], function() {
@@ -87,18 +86,6 @@ gulp.task("App", ['clean-build'], function() {
         .pipe(react())
         .pipe(babel())
         .pipe(gulp.dest('./example/build/'))
-})
-
-gulp.task('swagger', () => {
-  debug("Added swagger.json to public directory...")
-  return gulp.src('examples/swagger.json')
-    .pipe(gulp.dest('example/public/'))
-})
-
-gulp.task('swagger-tools', () => {
-  debug("Added swagger tools to public directory...")
-  return gulp.src('swaggertools/swaggertools.js')
-    .pipe(gulp.dest('example/public/'))
 })
 
 gulp.task('clean-public', () => {
