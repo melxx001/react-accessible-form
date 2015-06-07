@@ -1,34 +1,10 @@
 var React = require('react')
-//var swaggerTools = require('../swaggertools')
-var tv4 = require('tv4')
-var zSchema = require('z-schema')
+var SwaggerTools = require('swagger-tools')
+var schema = require('../example/data/swagger.json')
 
 var Input = React.createClass({
 	handleChange: function (event) {
-		var schema = require('../example/swagger.json')
-
 		console.log('change')
-		/*var valid = tv4.validate({ids: '10'}, schema)
-		console.log(valid)
-		if(!valid && tv4.error){
-			this.setState({ validationError: tv4.error.message })
-		}
-
-		var validator = new zSchema()
-		
-		valid = validator.validate({
-			id: '10',
-			sequence: 1,
-			ctrlType: 'edit',
-			dataType: 'CHAR',
-			label: 'test'
-		}, schema)
-		console.log(valid)
-		if(!valid){
-			var error = validator.getLastError();
-			//this.setState({ validationError: JSON.stringify(error) })
-		}*/
-
 		var spec = SwaggerTools.specs.v2;
 		var parent = this;
 		//debugger;

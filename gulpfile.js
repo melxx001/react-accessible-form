@@ -10,6 +10,7 @@ var clean = require('gulp-clean')
 var nodemon = require('gulp-nodemon')
 var webpack = require('webpack')
 var runSequence = require('run-sequence')
+var fs = require('fs')
 var debug = require('debug')("react-accessible-forms:gulp")
 
 gulp.task('watch', () => {
@@ -46,21 +47,26 @@ gulp.task("lib", ['clean-lib'], () => {
 })
 
 gulp.task('main', ['clean-public'], function () {
+    var filenames = fs.readdirSync("example/app/client/")
+    var entries = {}
+
+    filenames.map(function(file){
+      entries[file.replace(".jsx", "")] = "./example/app/client/" + file
+    })
+
     webpack({
           resolve: {
-            extensions: ['', '.js', ".jsx"]
+            extensions: ['', '.js', '.jsx']
           },
-          entry: {
-            main: __dirname + "/example/app/main.jsx"
-          },
+          entry: entries,
           output: {
-              path: __dirname + "/example/public",
-              filename: "[name].js"
+              path: __dirname + '/example/public',
+              filename: '[name]Client.js'
           },
           module: {
             loaders: [
-              {test: /\.json$/, loader: "json-loader"},
-              {test: /\.js$/, loader: "jsx-loader?harmony"}
+              {test: /\.json$/, loader: 'json-loader'},
+              {test: /\.js$/, loader: 'jsx-loader?harmony'}
             ]
           },
           plugins: [
