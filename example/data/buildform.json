@@ -1,0 +1,72 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Example API",
+        "description": "Test API",
+        "version": "1.0"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "basePath": "/api/test",
+    "paths": {
+        "/expenses": {
+            "get": {
+                "description": "return expense form fields",
+                "tags": [
+                    "Expense"
+                ],
+                "x-swagger-router-controller": "expenses",
+                "operationId": "getExpenses",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful request.",
+                        "schema": {
+                            "$ref": "#/definitions/Expenses"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Expenses": {
+            "properties": {
+                "reportName": {
+                    "type" : "string",
+                    "maxLength": 10,
+                    "minLength": 5,
+                    "pattern": "[a-zA-Z]"
+                },
+                "reportCategory": {
+                    "type" : "string",
+                    "maxLength": 10
+                },
+                "reportTotal": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 20, 
+                    "maximum": 10000 
+                },
+                "currency": {
+                    "type": "string",
+                    "default": "USD",
+                    "enum": [
+                      "USD",
+                      "Euro"
+                    ]
+                },
+                "reportDate": {
+                    "type": "object",
+                    "format": "date"
+                }
+            },
+            "required": [
+                "reportName"
+            ]
+        }
+    }
+}

@@ -40,7 +40,7 @@ gulp.task('default', () => {
 
 gulp.task("lib", ['clean-lib'], () => {
   debug("Build task...")
-  return gulp.src("src/**")
+  return gulp.src("src/**/*")
     .pipe(react())
     .pipe(babel())
     .pipe(gulp.dest("lib"))
@@ -96,18 +96,18 @@ gulp.task("App", ['clean-build'], function() {
 
 gulp.task('clean-public', () => {
   debug("Cleaning public directory...")
-  return gulp.src('example/public/**', {read: false})
+  return gulp.src('example/public/**/*', {read: false})
     .pipe(clean())
 })
 
 gulp.task('clean-build', () => {
   debug("Cleaning public directory...")
-  return gulp.src('example/build/**', {read: false})
+  return gulp.src('example/build/**/*', {read: false})
     .pipe(clean())
 })
 
 gulp.task('clean-lib', () => {
   debug("Cleaning lib directory...")
-  return gulp.src('lib/**', {read: false})
+  return gulp.src('lib/**/*', {read: false})
     .pipe(clean())
 })

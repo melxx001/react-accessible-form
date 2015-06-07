@@ -1,6 +1,26 @@
 var React = require('react')
 var swaggerTools = require('swagger-tools')
-var schema = require('../example/data/swaggerform.json')
+var spec = swaggerTools.specs.v2
+
+// Will move this function to an appropriate location
+function updateValue(value, type = "string", format = ""){
+	type = type.toLowerCase()
+	format = format.toLowerCase()
+
+	if(type === 'object' && format === 'date'){
+		return new Date(value)
+	}
+
+	if(type === "number"){
+		return (format === "float") ? parseFloat(value) : parseInt(value);
+	}
+
+	if(type === "boolean"){
+		return Boolean(value);
+	}
+
+	return value;
+}
 
 var Input = React.createClass({
 	propTypes: {
@@ -33,10 +53,10 @@ var Input = React.createClass({
 			width: 0,*/
 			placeHolder: "",
 			initialValue: "",
-			// pattern: "",
-			// groupClassName: "",
-			// fieldClassName: "",
-			// labelClassName: ""
+			/*pattern: "",
+			groupClassName: "",
+			fieldClassName: "",
+			labelClassName: ""*/
 		}
 	},
 	getInitialState: function () {
@@ -47,17 +67,20 @@ var Input = React.createClass({
 	        validationError: ''
 	    }
 	},
-	handleChange: function (event) {	
+	_onChange: function (event) {
+		var trimmed = event.target.value.trim();
+
 		this.setState({
-			value: event.target.value.trim()
+			value: trimmed
 		});
-		var spec = swaggerTools.specs.v2
-		spec.validateModel(schema, '#/definitions/Expenses', {
-			reportName: event.target.value,
-			reportCategory: event.target.value,
-			reportTotal: parseInt(event.target.value),
-			reportDate: new Date(event.target.value)
-		}, (err, result) => {
+
+		var properties = {}
+
+		Object.keys(this.props.properties).forEach((item) => {
+			properties[item] = updateValue(trimmed, this.props.properties[this.props.field].type, this.props.properties[this.props.field].format)
+		})
+		
+		spec.validateModel(this.props.schema, '#/definitions/Expenses', properties, (err, result) => {
 		    this.setState({
 		    	validationError: ''
 		    })
@@ -88,7 +111,7 @@ var Input = React.createClass({
 					placeholder = {this.props.placeHolder}
 					required = {this.props.required}
 					data-isvalid = {this.state.isValid}
-					onChange = {this.handleChange}
+					onChange = {this._onChange}
 					value = {this.state.value}
 					fieldClassName = {this.props.fieldClassName}
 				/>
@@ -98,19 +121,4 @@ var Input = React.createClass({
 	}
 })
 
-// Created after an api call
-var SwaggerForm = React.createClass({
-  render: function() {
-    return (
-    	<div> 
-        	<Input type="text" label="Report Name" field="reportName" />
-        	<Input type="text" label="Report Category" field="reportCategory" />
-        	<Input type="number" label="Report Total" field="reportTotal" />
-        	<Input type="date" label="Report Date" field="reportDate" />
-        </div>
-      
-    )
-  }
-})
-
-module.exports = SwaggerForm
+module.exports = Input;

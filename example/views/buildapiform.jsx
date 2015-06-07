@@ -1,6 +1,6 @@
 var React = require('react')
 var DefaultLayout = require('../views/layout')
-var SwaggerformApp = require('../build/components/BuildSwaggerFormApp')
+var SwaggerformApp = require('../build/components/BuildAPIFormApp')
 
 var Swaggerform = React.createClass({
   render: function() {
