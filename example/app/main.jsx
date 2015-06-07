@@ -1,4 +1,4 @@
 var React = require('react/addons')
-var App = require('../build/App')
+var SwaggerformApp = require('../build/components/SwaggerformApp')
 
-React.render(React.createElement(App), document.getElementById("content"))
+React.render(React.createElement(SwaggerformApp), document.getElementById("content"))

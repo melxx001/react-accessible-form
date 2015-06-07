@@ -28,13 +28,13 @@ gulp.task('watch', () => {
     "ignore": ["lib/*", "node_modules/*", "gulpfile.js", "*.json" , "example/public/*", "example/build/*"],
     stdout: true
   }).on('restart', () => {
-    runSequence('App', 'main', 'lib')
+    runSequence('lib', 'App', 'main')
   })
 })
 
 gulp.task('default', () => {
   debug("Default task...")
-  runSequence('App', 'main', 'lib', 'watch')
+  runSequence('lib', 'App', 'main', 'watch')
 })
 
 gulp.task("lib", ['clean-lib'], () => {
@@ -82,10 +82,10 @@ gulp.task('main', ['clean-public'], function () {
 
 gulp.task("App", ['clean-build'], function() {
     debug("App task...")
-    return gulp.src("example/app/components/App.jsx")
+    return gulp.src("example/app/components/**")
         .pipe(react())
         .pipe(babel())
-        .pipe(gulp.dest('./example/build/'))
+        .pipe(gulp.dest('./example/build/components'))
 })
 
 gulp.task('clean-public', () => {

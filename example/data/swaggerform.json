@@ -1,0 +1,79 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Example API",
+        "description": "Test API",
+        "version": "1.0"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "basePath": "/api/test",
+    "paths": {
+        "/expenses": {
+            "get": {
+                "description": "return expense form fields",
+                "tags": [
+                    "Expense"
+                ],
+                "x-swagger-router-controller": "expenses",
+                "operationId": "getExpenses",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful request.",
+                        "schema": {
+                            "$ref": "#/definitions/Expenses"
+                        }
+                    },
+                    "default": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Expenses": {
+            "properties": {
+                "reportName": {
+                    "type" : "string",
+                    "maxLength": 10,
+                    "minLength": 5
+                },
+                "reportCategory": {
+                    "type" : "string",
+                    "maxLength": 10
+                },
+                "reportTotal": {
+                    "type": "number",
+                    "format": "float",
+                    "default": 0.00 
+                },
+                "reportDate": {
+                    "type": "object",
+                    "format": "date"
+                }
+            },
+            "required": [
+                "reportName",
+                "reportDate"
+            ]
+        },
+        "Error": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "message"
+            ]
+        }
+    }
+}
