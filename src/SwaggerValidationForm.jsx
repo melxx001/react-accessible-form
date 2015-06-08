@@ -1,6 +1,6 @@
 var React = require('react')
 var swaggerTools = require('swagger-tools')
-var schema = require('../example/data/swaggerform.json')
+var schema = require('../example/data/SwaggerValidationForm.json')
 
 var Input = React.createClass({
 	propTypes: {
@@ -32,7 +32,7 @@ var Input = React.createClass({
 			max: 0,
 			width: 0,*/
 			placeHolder: "",
-			initialValue: "",
+			initialValue: ""
 			// pattern: "",
 			// groupClassName: "",
 			// fieldClassName: "",
@@ -50,7 +50,8 @@ var Input = React.createClass({
 	handleChange: function (event) {	
 		this.setState({
 			value: event.target.value.trim()
-		});
+		})
+
 		var spec = swaggerTools.specs.v2
 		spec.validateModel(schema, '#/definitions/Expenses', {
 			reportName: event.target.value,
@@ -74,7 +75,7 @@ var Input = React.createClass({
 	render: function () {
 	    return (
             <div className = {this.props.groupClassName}>
-            	<label className={this.props.labelClassName}>{this.props.label}</label>
+            	<label className = {this.props.labelClassName}>{this.props.label}</label>
                 <input
                 	type = {this.props.type} 
 					name = {this.props.name}

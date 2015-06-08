@@ -2,7 +2,7 @@ var React = require('react')
 var Input = require('./formfields/Input')
 
 // Simulate api call
-var schema = require('../example/data/buildform.json')
+var schema = require('../example/data/BuildSwaggerForm.json')
 
 // Form field types
 var formFieldType = {
@@ -38,7 +38,7 @@ Object.keys(definitions).map((form) => {
 	Object.keys(properties).map((item,i) => {
 		var formField = properties[item]
 		formItems.push(
-			<Input schema={schema} properties={properties} key={i} type={getType(formField.type, formField.format)} label={localization(item)} field={item} />
+			<Input schema={schema} properties={properties} key={item} type={getType(formField.type, formField.format)} label={localization(item)} field={item} />
 		)
 	})
 })

@@ -4,27 +4,27 @@ var debug = require('debug')("react-accessible-forms:routes")
 module.exports = function(app) {
 	
 	app.get('/', function(req, res){
-		var App = require('../../build/components/App')
+		var App = require('../../build/components/Index')
 		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('index', {content: html,  title: "Initial Test" })
+	    res.render('Index', {content: html,  title: "Initial Test" })
 	})
 
 	app.get('/test1', function(req, res){
-		var App = require('../../build/components/SwaggerFormApp')
+		var App = require('../../build/components/SwaggerValidationForm')
 		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('swaggerform', {content: html, title: "Swagger 2.0 Based Validation" })
+	    res.render('SwaggerValidationForm', {content: html, title: "Form with Swagger 2.0 Based Validation" })
 	})
 
 	app.get('/test2', function(req, res){
-		var App = require('../../build/components/BuildFormApp')
+		var App = require('../../build/components/BuildSwaggerForm')
 		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('buildform', {content: html,  title: "Build form with swagger validation" })
+	    res.render('BuildSwaggerForm', {content: html,  title: "Build form from Swagger Schema with swagger validation" })
 	})
 
 	app.get('/test3', function(req, res){
-		var App = require('../../build/components/BuildAPIFormApp')
+		var App = require('../../build/components/BuildJSONSchemaForm')
 		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('buildapiform', {content: html,  title: "Build form from api" })
+	    res.render('BuildJSONSchemaForm', {content: html,  title: "Build form from JSON Schema" })
 	})
 
 	/*app.get('/test4', function(req, res){

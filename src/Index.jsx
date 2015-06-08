@@ -1,6 +1,6 @@
 var React = require('react')
 var SwaggerTools = require('swagger-tools')
-var schema = require('../example/data/swagger.json')
+var schema = require('../example/data/Index.json')
 
 var Input = React.createClass({
 	handleChange: function (event) {
@@ -41,7 +41,6 @@ var Input = React.createClass({
 
 
 var Form = React.createClass({
-  //var formData = createForm();
   render: function() {
     return (
     	<div> 

@@ -12,42 +12,34 @@ function updateValue(value, type = "string", format = ""){
 	}
 
 	if(type === "number"){
-		return (format === "float") ? parseFloat(value) : parseInt(value);
+		return (format === "float") ? parseFloat(value) : parseInt(value)
 	}
 
 	if(type === "boolean"){
-		return Boolean(value);
+		return Boolean(value)
 	}
 
-	return value;
+	return value
 }
 
-var Input = React.createClass({
+var Select = React.createClass({
 	propTypes: {
 			required: React.PropTypes.bool,
-			type: React.PropTypes.string,
+			selected: React.PropTypes.bool,
 			name: React.PropTypes.string,
 			label: React.PropTypes.string,
-			placeHolder: React.PropTypes.string,
-			minLength: React.PropTypes.number,
-			maxLength: React.PropTypes.number,
-			max: React.PropTypes.number,
-			min: React.PropTypes.number,
-			width: React.PropTypes.number,
-			pattern: React.PropTypes.string,
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
-			fieldClassName: React.PropTypes.string
+			fieldClassName: React.PropTypes.string,
+			options: React.PropTypes.array
 	},
 	getDefaultProps: function() {
 		return {
 			required: false,
-			type: 'text',
 			name: "",
-			label: "",
-			placeHolder: "",
-			initialValue: ""
+			options: [["",""]],
+			initialValue: "",
 		}
 	},
 	getInitialState: function () {
@@ -88,32 +80,32 @@ var Input = React.createClass({
 		}
 	},
 	render: function () {
+		var options = this.props.options
+		var optionsHtml = []
+		Object.keys(options).forEach(function(option, i){
+			var choice = options[i]
+			optionsHtml.push(<option key={choice[0]} value={choice[0]}>{choice[1]}</option>)
+		})
+
 	    return (
             <div className = {this.props.groupClassName}>
             	<label className={this.props.labelClassName}>{this.props.label}</label>
-                <input
-                	type = {this.props.type} 
+                <select
 					name = {this.props.name}
-					size = {this.props.width}
-					maxLength = {this.props.maxLength}
-					minLength = {this.props.minLength}
-					data-validate-required={this.props.required}
-					data-validate-minimum-length={this.props.minLength}
-					data-validate-maximum-length={this.props.minLength}
-					max = {this.props.max}
-					min = {this.props.min}
-					pattern = {this.props.pattern}
-					placeholder = {this.props.placeHolder}
 					required = {this.props.required}
+					data-required = {this.props.required}
 					data-isvalid = {this.state.isValid}
 					onChange = {this._onChange}
 					value = {this.state.value}
 					fieldClassName = {this.props.fieldClassName}
-				/>
+					selected = {this.props.selected} 
+				>
+					{optionsHtml}
+				</select>
                 <p className={this.props.errorClassName}>{this.state.validationError}</p>
             </div>
 	    )
 	}
 })
 
-module.exports = Input;
+module.exports = Select

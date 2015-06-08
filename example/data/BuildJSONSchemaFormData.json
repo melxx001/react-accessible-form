@@ -1,0 +1,33 @@
+{
+  "FormDef": [
+    {
+      "fieldType": "input",
+      "type": "text",
+      "label": "Purpose",
+      "name": "purpose",
+      "placeHolder": "This is a test",
+      "maxLength": 10,
+      "minLength": 2,
+      "required": true
+    },
+    {
+      "fieldType": "input",
+      "type": "text",
+      "label": "User Name",
+      "name": "username",
+      "placeHolder": "This is a username test"
+    },
+    {
+      "fieldType": "select",
+      "label": "Test Choice",
+      "name": "choice",
+      "options": [
+        ["", ""],
+        ["1", "First choice"],
+        ["2", "Second choice"],
+        ["3", "Third choice"],
+        ["4", "Fourth choice"]
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 var React = require('react/addons')
-var SwaggerForm = require('../../../lib/buildswaggerform')
+var SwaggerForm = require('../../../lib/SwaggerValidationForm')
 
-var SwaggerFormApp = React.createClass({
+var App = React.createClass({
       render: function () {
         return (
           <div>
@@ -11,4 +11,4 @@ var SwaggerFormApp = React.createClass({
       }
   })
 
-module.exports = SwaggerFormApp
+module.exports = App
