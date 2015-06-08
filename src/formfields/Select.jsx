@@ -1,6 +1,8 @@
 var React = require('react')
 var swaggerTools = require('swagger-tools')
 var spec = swaggerTools.specs.v2
+var validator = require('../validation');
+var formValidation = new validator();
 
 // Will move this function to an appropriate location
 function updateValue(value, type = "string", format = ""){
@@ -36,7 +38,6 @@ var Select = React.createClass({
 	},
 	getDefaultProps: function() {
 		return {
-			required: false,
 			name: "",
 			options: [["",""]],
 			initialValue: "",
@@ -70,6 +71,7 @@ var Select = React.createClass({
 			    })
 
 			    if (result && result.errors) {
+			    	console.log(result)
 			        result.errors.forEach( (error) => {
 			            if (error.path[0] === this.props.field) {
 			                this.setState({validationError: error.message})
@@ -77,6 +79,22 @@ var Select = React.createClass({
 			        })
 			    }
 			})
+		}else{
+			var data = event.target;
+			var results = formValidation.validate(data.value, data.dataset);
+			var messages = [];
+			results.forEach(function(result){
+				if(result.error){
+					messages.push(result.message)
+				}
+			});
+
+			this.setState({
+				value: data.value,
+				errors: messages.join(" - "),
+				validationError: messages.join(" - "),
+				isValid: (messages.length === 0) ? true : false
+			});
 		}
 	},
 	render: function () {
@@ -84,7 +102,7 @@ var Select = React.createClass({
 		var optionsHtml = []
 		Object.keys(options).forEach(function(option, i){
 			var choice = options[i]
-			optionsHtml.push(<option key={choice[0]} value={choice[0]}>{choice[1]}</option>)
+			optionsHtml.push(<option key={i} value={choice[0]}>{choice[1]}</option>)
 		})
 
 	    return (
@@ -93,8 +111,8 @@ var Select = React.createClass({
                 <select
 					name = {this.props.name}
 					required = {this.props.required}
-					data-required = {this.props.required}
-					data-isvalid = {this.state.isValid}
+					data-validate-required = {this.props.required}
+					data-isvalid = {this.state.isValid}		//Set to false in beginning. Not be alway correct.
 					onChange = {this._onChange}
 					value = {this.state.value}
 					fieldClassName = {this.props.fieldClassName}

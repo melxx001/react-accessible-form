@@ -1,6 +1,8 @@
 var React = require('react')
 var swaggerTools = require('swagger-tools')
 var spec = swaggerTools.specs.v2
+var validator = require('../validation');
+var formValidation = new validator();
 
 // Will move this function to an appropriate location
 function updateValue(value, type = "string", format = ""){
@@ -42,7 +44,6 @@ var Input = React.createClass({
 	},
 	getDefaultProps: function() {
 		return {
-			required: false,
 			type: 'text',
 			name: "",
 			label: "",
@@ -78,6 +79,7 @@ var Input = React.createClass({
 			    })
 
 			    if (result && result.errors) {
+			    	console.log(result)
 			        result.errors.forEach( (error) => {
 			            if (error.path[0] === this.props.field) {
 			                this.setState({validationError: error.message})
@@ -85,6 +87,22 @@ var Input = React.createClass({
 			        })
 			    }
 			})
+		}else{
+			var data = event.target;
+			var results = formValidation.validate(data.value, data.dataset);
+			var messages = [];
+			results.forEach(function(result){
+				if(result.error){
+					messages.push(result.message)
+				}
+			});
+
+			this.setState({
+				value: data.value,
+				errors: messages.join(" - "),
+				validationError: messages.join(" - "),
+				isValid: (messages.length === 0) ? true : false
+			});
 		}
 	},
 	render: function () {
@@ -99,7 +117,8 @@ var Input = React.createClass({
 					minLength = {this.props.minLength}
 					data-validate-required={this.props.required}
 					data-validate-minimum-length={this.props.minLength}
-					data-validate-maximum-length={this.props.minLength}
+					data-validate-maximum-length={this.props.maxLength}
+					data-validate-pattern={this.props.pattern}
 					max = {this.props.max}
 					min = {this.props.min}
 					pattern = {this.props.pattern}

@@ -31,11 +31,10 @@ function localization(type){
 }
 
 var Formfields = {
-	input: function(options, key){
-		return <Input key={key} {...options} />
+	edit: function(options, key){
+		return <Input type="text" key={key} {...options} />
 	},
-	select: function(options, key){
-		//options.key = options.key || key
+	picklist: function(options, key){
 		return <Select key={key} {...options} />
 	}
 }
@@ -44,10 +43,20 @@ var Formfields = {
 // Did not take in consideration the error section in the swagger doc yet.
 var definitions = data.FormDef
 var formItems = []
-definitions.map((fieldInfo, i) => {
-	var fieldType = fieldInfo.fieldType.toLowerCase();
+definitions.sort((a,b) => {
+  if (a.sequence > b.sequence) {
+    return 1
+  }
+  
+  if (a.sequence < b.sequence) {
+    return -1
+  }
+  
+  return 0
+}).map((fieldInfo, i) => {
+	var ctrlType = fieldInfo.ctrlType.toLowerCase();
 	formItems.push(
-		Formfields[fieldType](fieldInfo, i)
+		Formfields[ctrlType](fieldInfo, i)
 	)
 })
 

@@ -1,26 +1,31 @@
 {
   "FormDef": [
     {
-      "fieldType": "input",
-      "type": "text",
+      "ctrlType": "edit",
+      "sequence": 2,
       "label": "Purpose",
       "name": "purpose",
       "placeHolder": "This is a test",
       "maxLength": 10,
       "minLength": 2,
-      "required": true
+      "width": 32,
+      "pattern": "(?:^|\\s)[a-z]+(?:\\s|$)"
     },
     {
-      "fieldType": "input",
-      "type": "text",
+      "ctrlType": "edit",
+      "sequence": 3,
       "label": "User Name",
       "name": "username",
-      "placeHolder": "This is a username test"
+      "required": true,
+      "placeHolder": "This is a username test",
+      "width": 100
     },
     {
-      "fieldType": "select",
+      "ctrlType": "picklist",
       "label": "Test Choice",
+      "sequence": 1,
       "name": "choice",
+      "required": true,
       "options": [
         ["", ""],
         ["1", "First choice"],

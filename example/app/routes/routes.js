@@ -24,7 +24,7 @@ module.exports = function(app) {
 	app.get('/test3', function(req, res){
 		var App = require('../../build/components/BuildJSONSchemaForm')
 		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('BuildJSONSchemaForm', {content: html,  title: "Build form from JSON Schema" })
+	    res.render('BuildJSONSchemaForm', {content: html,  title: "Build form from JSON Schema with regular validation" })
 	})
 
 	/*app.get('/test4', function(req, res){
