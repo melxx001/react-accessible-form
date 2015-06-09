@@ -3,13 +3,13 @@
     {
       "ctrlType": "edit",
       "sequence": 2,
-      "label": "Purpose",
-      "name": "purpose",
+      "label": "Report Name",
+      "name": "reportName",
       "placeHolder": "This is a test",
       "maxLength": 10,
       "minLength": 2,
       "width": 32,
-      "pattern": "(?:^|\\s)[a-z]+(?:\\s|$)"
+      "initialValue": "Report1"
     },
     {
       "ctrlType": "edit",
@@ -17,15 +17,29 @@
       "label": "User Name",
       "name": "username",
       "required": true,
-      "placeHolder": "This is a username test",
-      "width": 100
+      "placeHolder": "Add username",
+      "width": 70,
+      "pattern": "^[a-z|\\s]+$",
+      "initialValue": "user name"
     },
     {
-      "ctrlType": "picklist",
+      "ctrlType": "edit",
+      "sequence": 4,
+      "label": "Read Only",
+      "name": "readonly",
+      "required": true,
+      "width": 20,
+      "initialValue": "Can't edit",
+      "readOnly": "true"
+    },
+    {
+      "ctrlType": "pickList",
       "label": "Test Choice",
       "sequence": 1,
       "name": "choice",
       "required": true,
+      "listKey": [1, "en"],
+      "initialValue": "4",
       "options": [
         ["", ""],
         ["1", "First choice"],
@@ -33,6 +47,85 @@
         ["3", "Third choice"],
         ["4", "Fourth choice"]
       ]
+    },
+    {
+      "ctrlType": "date",
+      "label": "Date",
+      "sequence": 11,
+      "name": "Date",
+      "required": true
+    },
+    {
+      "ctrlType": "time",
+      "label": "Time",
+      "sequence": 12,
+      "name": "Time",
+      "required": true
+    },
+    {
+      "ctrlType": "telephone",
+      "label": "Telephone",
+      "sequence": 5,
+      "name": "telephone",
+      "required": true,
+      "placeHolder": "Enter 10 digit phone",
+      "pattern" : "^\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
+    },
+    {
+      "ctrlType": "range",
+      "label": "Range",
+      "sequence": 6,
+      "name": "range",
+      "min": 0,
+      "max": 100,
+      "step": 10
+    },
+    {
+      "ctrlType": "Number",
+      "label": "Float",
+      "sequence": 10,
+      "format": "float"
+    },
+    {
+      "ctrlType": "Number",
+      "label": "Integer 32",
+      "sequence": 11,
+      "format": "int32"
+    },
+    {
+      "ctrlType": "Number",
+      "label": "Integer 64",
+      "sequence": 12,
+      "format": "int64"
+    },
+    {
+      "ctrlType": "url",
+      "label": "Url",
+      "sequence": 7,
+      "name": "url"
+    },
+    {
+      "ctrlType": "image",
+      "label": "image",
+      "sequence": 13,
+      "name": "image",
+      "source": "http://cdn5.windows10themes.net/wallpaper/cat/movies/transformers-wallpaper/autobots%20(alt).ico"
+    },
+    {
+      "ctrlType": "email",
+      "label": "email",
+      "sequence": 9,
+      "name": "email",
+      "placeHolder": "Enter your email address!"
+    },
+    {
+      "ctrlType": "password",
+      "label": "password",
+      "sequence": 9,
+      "name": "password",
+      "width": 70,
+      "placeHolder": "Enter 8 chars minimum, 1 number, 1 special, 1 uppercase, 1 lowercase",
+      "pattern": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$"
     }
   ]
 }

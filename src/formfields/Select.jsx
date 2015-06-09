@@ -46,13 +46,14 @@ var Select = React.createClass({
 	getInitialState: function () {
 	    return {
 	    	errors: "",
-			isValid: false,
+			isValid: this.props.initialValue ? true : false,
 			value: this.props.initialValue,
 	        validationError: ''
 	    }
 	},
 	_onChange: function (event) {
-		var trimmed = event.target.value.trim();
+		var data = event.target;
+		var trimmed = data.value.trim();
 
 		this.setState({
 			value: trimmed
@@ -74,14 +75,16 @@ var Select = React.createClass({
 			    	console.log(result)
 			        result.errors.forEach( (error) => {
 			            if (error.path[0] === this.props.field) {
-			                this.setState({validationError: error.message})
+			                this.setState({
+			                	validationError: error.message,
+			                	isValid: false
+			                })
 			            }
 			        })
 			    }
 			})
 		}else{
-			var data = event.target;
-			var results = formValidation.validate(data.value, data.dataset);
+			var results = formValidation.validate(trimmed, data.dataset);
 			var messages = [];
 			results.forEach(function(result){
 				if(result.error){
@@ -90,7 +93,6 @@ var Select = React.createClass({
 			});
 
 			this.setState({
-				value: data.value,
 				errors: messages.join(" - "),
 				validationError: messages.join(" - "),
 				isValid: (messages.length === 0) ? true : false
@@ -116,11 +118,11 @@ var Select = React.createClass({
 					onChange = {this._onChange}
 					value = {this.state.value}
 					fieldClassName = {this.props.fieldClassName}
-					selected = {this.props.selected} 
+					readOnly = {this.props.readOnly}
 				>
 					{optionsHtml}
 				</select>
-                <p className={this.props.errorClassName}>{this.state.validationError}</p>
+                <p className={this.props.errorClassName} style={this.state.validationError ? {color: 'red'} : undefined}>{this.state.validationError}</p>
             </div>
 	    )
 	}
