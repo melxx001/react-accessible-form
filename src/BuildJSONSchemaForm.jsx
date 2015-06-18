@@ -1,6 +1,6 @@
 var React = require('react')
-var Input = require('./formfields/Input')
-var Select = require('./formfields/Select')
+var Input = require('./formfields/InputTest')
+var Select = require('./formfields/SelectTest')
 
 // Simulate api call
 var data = require('../example/data/BuildJSONSchemaFormData.json')

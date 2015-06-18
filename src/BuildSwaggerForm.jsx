@@ -1,5 +1,5 @@
 var React = require('react')
-var Input = require('./formfields/Input')
+var Input = require('./formfields/InputTest')
 
 // Simulate api call
 var schema = require('../example/data/BuildSwaggerForm.json')
