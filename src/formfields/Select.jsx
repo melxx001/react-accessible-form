@@ -3,35 +3,25 @@ var validator = require( '../validation' )
 var formValidation = new validator()
 var cuid = require('cuid')
 
-var Input = React.createClass({
+var Select = React.createClass({
 	propTypes: {
 			required: React.PropTypes.bool,
-			type: React.PropTypes.string,
+			selected: React.PropTypes.bool,
 			name: React.PropTypes.string,
 			label: React.PropTypes.string,
-			placeHolder: React.PropTypes.string,
-			minLength: React.PropTypes.number,
-			maxLength: React.PropTypes.number,
-			max: React.PropTypes.number,
-			min: React.PropTypes.number,
-			step: React.PropTypes.number,
-			width: React.PropTypes.number,
-			pattern: React.PropTypes.string,
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
 			fieldClassName: React.PropTypes.string,
 			validation: React.PropTypes.string,
-			isNumber: React.PropTypes.bool,
-			source: React.PropTypes.string,
-			format: React.PropTypes.string,
 			readOnly: React.PropTypes.bool,
 			schema: React.PropTypes.string,
+			options: React.PropTypes.array,
 			id: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {
-			type: 'text',
+			options: [["",""]],
 			initialValue: '',
 			id: cuid()	// Get a unique Id if it's not passed
 		}
@@ -85,11 +75,11 @@ var Input = React.createClass({
 		})
 	},
 	render: function () {
-		var type = this.props.type.toLowerCase()
 		var preLabel = undefined
 		var postLabel = undefined
-		var format = this.props.format ? this.props.format.toLowerCase() : ''
 		var errors = []
+		var options = this.props.options
+		var optionsHtml = []
 
 		if ( this.props.preLabel || this.props.label ){
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
@@ -103,36 +93,28 @@ var Input = React.createClass({
 			})
 		}
 
+		Object.keys(options).forEach(function( option, i ){
+			var choice = options[i]
+			optionsHtml.push( <option key={ 'option' + i } value={ choice[0] }>{ choice[1] }</option> )
+		})
+
 	    return (
             <div className = { this.props.groupClassName }>
             	{ preLabel }
-                <input
+                <select
                 	id = { this.props.id }
-                	type = { type } 
 					name = { this.props.name }
-					size = { this.props.width }
 					data-validate-required = { this.props.required }
-					data-validate-minimum-length = { this.props.minLength }
-					data-validate-maximum-length = { this.props.maxLength }
-					data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.pattern }
-					data-validate-email = { type === 'email' ? true : undefined }
-					data-validate-password = { type === 'password' ? this.props.pattern : undefined }
-					data-validate-telephone = { type === 'tel' ? this.props.pattern : undefined }
-					data-validate-float = { format === 'float' ? true : undefined }
-					data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
-					data-validate-number = { this.props.isNumber ? true : undefined }
 					data-isvalid = { this.state.isValid }
-					max = { this.props.max }
-					min = { this.props.min }
-					step = { this.props.step }
-					src = { this.props.source }
 					placeholder = { this.props.placeHolder }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
 					value = { this.state.value }
 					fieldClassName = { this.props.fieldClassName }
 					readOnly = { this.props.readOnly }
-				/>
+				>
+				{ optionsHtml }
+				</select>
 				{ postLabel }
                 { errors }
             </div>
@@ -140,4 +122,4 @@ var Input = React.createClass({
 	}
 })
 
-module.exports = Input
+module.exports = Select
