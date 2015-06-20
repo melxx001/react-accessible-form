@@ -32,22 +32,38 @@ var Input = React.createClass({
 	    }
 	},
 	_onChange: function (event) {
+		console.log(this.props.onChange)
+		if(this.props.onChange){
+			this.props.onChange(this)
+		}
+
+		// run validation
+	},
+	_onInput: function (event) {
+		if(this.props.onInput){
+			this.props.onInput(this)
+		}
+
+		this.setState({
+			value: event.target.value.trim()
+		})
 	},
 	render: function () {
 		var type = this.props.type.toLowerCase()
-		var preLabel = ''
-		var postLabel = ''
+		var preLabel = undefined
+		var postLabel = undefined
 
 		if (this.props.preLabel || this.props.label){
-			preLabel = <label className={this.props.labelClassName}>{this.props.preLabel || this.props.label}</label>
+			preLabel = <label htmlFor={this.props.id} className={this.props.labelClassName}>{this.props.preLabel || this.props.label}</label>
 		}else if (this.props.postLabel){
-			postLabel = <label className={this.props.labelClassName}>{this.props.postLabel}</label>
+			postLabel = <label htmlFor={this.props.id} className={this.props.labelClassName}>{this.props.postLabel}</label>
 		}
 
 	    return (
             <div className = {this.props.groupClassName}>
             	{preLabel}
                 <input
+                	id = {this.props.id}
                 	type = {type} 
 					name = {this.props.name}
 					size = {this.props.width}
@@ -74,6 +90,7 @@ var Input = React.createClass({
 					placeholder = {this.props.placeHolder}
 					required = {this.props.required}
 					onChange = {this._onChange}
+					onInput = {this._onInput}
 					value = {this.state.value}
 					fieldClassName = {this.props.fieldClassName}
 					readOnly = {this.props.readOnly}
