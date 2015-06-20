@@ -1,6 +1,7 @@
 var React = require( 'react' )
 var validator = require( '../validation' )
 var formValidation = new validator()
+var cuid = require('cuid')
 
 var Input = React.createClass({
 	propTypes: {
@@ -13,18 +14,24 @@ var Input = React.createClass({
 			maxLength: React.PropTypes.number,
 			max: React.PropTypes.number,
 			min: React.PropTypes.number,
+			step: React.PropTypes.number,
 			width: React.PropTypes.number,
 			pattern: React.PropTypes.string,
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
-			fieldClassName: React.PropTypes.string
+			fieldClassName: React.PropTypes.string,
+			validation: React.PropTypes.string,
+			isNumber: React.PropTypes.bool,
+			source: React.PropTypes.string,
+			format: React.PropTypes.string,
+			readOnly: React.PropTypes.bool
 	},
 	getDefaultProps: function() {
 		return {
 			type: 'text',
-			errorClassName: '',
-			initialValue: ''
+			initialValue: '',
+			id: cuid()	// Get a unique Id if it's not passed
 		}
 	},
 	getInitialState: function() {
@@ -44,12 +51,13 @@ var Input = React.createClass({
 			this.props.onChange( this )
 		}
 
-		// Validate on change if explicitely set
+		// Validate on onChange if explicitely set
 		if( this.props.validation && this.props.validation.toLowerCase() === 'change' ){
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
 	_onBlur: function( event ) {
+		// Run the parent onBlur if it exists
 		if( this.props.onBlur ){
 			this.props.onBlur(this)
 		}
@@ -78,16 +86,17 @@ var Input = React.createClass({
 		var type = this.props.type.toLowerCase()
 		var preLabel = undefined
 		var postLabel = undefined
+		var format = this.props.format ? this.props.format.toLowerCase() : ''
 		var errors = []
 
 		if ( this.props.preLabel || this.props.label ){
-			preLabel = <label htmlFor={this.props.id} className={this.props.labelClassName}>{this.props.preLabel || this.props.label}</label>
+			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
 		}else if ( this.props.postLabel ){
-			postLabel = <label htmlFor={this.props.id} className={this.props.labelClassName}>{this.props.postLabel}</label>
+			postLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.postLabel }</label>
 		}
 
 		if( this.state.errors.length > 0 ){
-			this.state.errors.forEach( ( error, i ) => {	// used an arrow fucntion to keep the conttext of this
+			this.state.errors.forEach( ( error, i ) => {	// used an arrow fucntion to keep the context of this
 				errors.push( <span key={ 'errmessage' + i } className={ this.props.errorClassName }>{ error }</span> )
 			})
 		}
@@ -100,8 +109,6 @@ var Input = React.createClass({
                 	type = { type } 
 					name = { this.props.name }
 					size = { this.props.width }
-					//maxLength = { this.props.maxLength }
-					//minLength = { this.props.minLength }
 					data-validate-required = { this.props.required }
 					data-validate-minimum-length = { this.props.minLength }
 					data-validate-maximum-length = { this.props.maxLength }
@@ -109,19 +116,15 @@ var Input = React.createClass({
 					data-validate-email = { type === 'email' ? true : undefined }
 					data-validate-password = { type === 'password' ? this.props.pattern : undefined }
 					data-validate-telephone = { type === 'tel' ? this.props.pattern : undefined }
-					data-validate-url = { type === 'url' ? true : undefined }
-					data-validate-date = { type === 'date' ? true : undefined }
-					data-validate-date-time = { type === 'datetime' || type === 'datetime-local' ? true : undefined }
-					data-validate-float = { this.props.format === 'float' ? true : undefined }
-					data-validate-integer = { this.props.format === 'int32' || this.props.format === 'int64' ? true : undefined }
+					data-validate-float = { format === 'float' ? true : undefined }
+					data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
+					data-validate-number = { this.props.isNumber ? true : undefined }
 					data-isvalid = { this.state.isValid }
 					max = { this.props.max }
 					min = { this.props.min }
 					step = { this.props.step }
 					src = { this.props.source }
-					//pattern = { this.props.pattern }
 					placeholder = { this.props.placeHolder }
-					//required = { this.props.required }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
 					value = { this.state.value }

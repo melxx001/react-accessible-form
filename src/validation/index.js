@@ -50,6 +50,9 @@ Validator.validation = {
 	},
 	validateInteger: function(input = "") {
 		return error(validation.isInt(input), "Integer Error")
+	},
+	validateNumber: function(input = "") {
+		return error(validation.isNumeric(input), "Number Error")
 	}
 }
 
