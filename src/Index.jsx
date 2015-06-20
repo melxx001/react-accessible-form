@@ -8,9 +8,10 @@ var Form = React.createClass({
   render: function() {
     return (
     	<div> 
-        	<Input onChange={this._onChange} preLabel="Expense Type1" id="id-1" />
-        	<Input postLabel="Expense Type2" id="id-2" />
-        	<Input label="Expense Type2" id="id-2" />
+        	<Input required={true} minLength={3} maxLength={10} validation="blur" onChange={this._onChange} preLabel="Expense Type1" id="id-1" />
+        	<Input minLength={10} onChange={this._onChange} preLabel="Expense Type2" id="id-2" />
+        	<Input minLength={10} validation="change" postLabel="Expense Type3" id="id-3" />
+        	<Input minLength={10} validation="none" label="Expense Type4" id="id-4" />
         </div>
       
     );

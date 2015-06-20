@@ -53,7 +53,7 @@ Validator.validation = {
 	}
 }
 
-Validator.prototype.validate = function(input, attributes) {
+Validator.prototype.validate = function(input = "", attributes = {}) {
 	var result = []
 	Object.keys(attributes).forEach(function(attr){
 		var validate = Validator.validation[attr]
