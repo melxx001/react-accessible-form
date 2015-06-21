@@ -34,7 +34,8 @@ var Select = React.createClass({
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
 			fieldClassName: React.PropTypes.string,
-			options: React.PropTypes.array
+			options: React.PropTypes.array,
+			field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {

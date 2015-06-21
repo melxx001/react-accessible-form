@@ -1,11 +1,11 @@
 var React = require('react')
-var swaggerTools = require('swagger-tools')
-var spec = swaggerTools.specs.v2
+//var swaggerTools = require('swagger-tools')
+//var spec = swaggerTools.specs.v2
 var validator = require('../validation');
 var formValidation = new validator();
 
 // Will move this function to an appropriate location
-function updateValue(value, type = "string", format = ""){
+/*function updateValue(value, type = "string", format = ""){
 	type = type.toLowerCase()
 	format = format.toLowerCase()
 
@@ -22,7 +22,7 @@ function updateValue(value, type = "string", format = ""){
 	}
 
 	return value;
-}
+}*/
 
 var Input = React.createClass({
 	propTypes: {
@@ -40,7 +40,8 @@ var Input = React.createClass({
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
-			fieldClassName: React.PropTypes.string
+			fieldClassName: React.PropTypes.string,
+			field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {
@@ -68,7 +69,7 @@ var Input = React.createClass({
 		});
 
 		if(this.props.schema){
-			let properties = {}
+			/*let properties = {}
 
 			Object.keys(this.props.properties).forEach((item) => {
 				properties[item] = updateValue(trimmed, this.props.properties[this.props.field].type, this.props.properties[this.props.field].format)
@@ -90,7 +91,21 @@ var Input = React.createClass({
 			            }
 			        })
 			    }
-			})
+			})*/
+
+			var results = formValidation.swaggerValidate( trimmed, this.props.field, this.props.schema, this.props.properties, '#/definitions/Expenses' );
+			var messages = [];
+			results.forEach(function(result){
+				if(result.error){
+					messages.push(result.message)
+				}
+			});
+
+			this.setState({
+				errors: messages.join(" - "),
+				validationError: messages.join(" - "),
+				isValid: (messages.length === 0) ? true : false
+			});
 		}else{
 			var results = formValidation.validate(trimmed, data.dataset);
 			var messages = [];

@@ -26,8 +26,13 @@ var Input = React.createClass({
 			source: React.PropTypes.string,
 			format: React.PropTypes.string,
 			readOnly: React.PropTypes.bool,
-			schema: React.PropTypes.string,
-			id: React.PropTypes.string
+			id: React.PropTypes.string,
+			alt: React.PropTypes.string,
+			swagger: React.PropTypes.shape({
+				schema: React.PropTypes.object.isRequired,
+				definition: React.PropTypes.string.isRequired,
+			}),
+			field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {
@@ -69,9 +74,39 @@ var Input = React.createClass({
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
+	getSwaggerProperties: function(schema , definition){
+		if( !schema || !definition ){
+			return null
+		}
+
+		var definitions = schema.definitions
+		var properties = {}
+
+		Object.keys(definitions).map( ( def ) => {
+			if( def === definition.replace( '#/definitions/' , '' ) ){
+				properties = definitions[ def ].properties
+			}
+		})
+
+		return properties
+	},
 	validate: function(value, dataset){
-		var results = formValidation.validate( value, dataset )
+		var results = []
 		var messages = []
+		var swagger = this.props.swagger
+
+		if( swagger && swagger.schema && swagger.definition ){
+			if( this.props.field ){
+				let properties = this.getSwaggerProperties( swagger.schema, swagger.definition )
+				if( properties ){
+					results = formValidation.swaggerValidate( value, this.props.field, swagger.schema, properties, swagger.definition )
+				}
+			}else{
+				console.warn( "The property 'field' must be part of this.props for swagger validation. Check if this.props.field is defined." )
+			}
+		}else{
+			results = formValidation.validate( value, dataset )
+		}
 
 		results.forEach(function( result ){
 			if( result.error ){
@@ -126,6 +161,7 @@ var Input = React.createClass({
 					min = { this.props.min }
 					step = { this.props.step }
 					src = { this.props.source }
+					alt = { this.props.alt }
 					placeholder = { this.props.placeHolder }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }

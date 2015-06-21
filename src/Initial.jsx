@@ -1,6 +1,6 @@
 var React = require('react')
 var SwaggerTools = require('swagger-tools')
-var schema = require('../example/data/Index.json')
+var schema = require('../example/data/Initial.json')
 
 var Input = React.createClass({
 	handleChange: function (event) {
