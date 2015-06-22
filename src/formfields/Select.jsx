@@ -143,7 +143,7 @@ var Select = React.createClass({
 					placeholder = { this.props.placeHolder }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
-					fieldClassName = { this.props.fieldClassName }
+					className = { this.props.fieldClassName }
 					value = { this.state.value }	// Manipulation of the component's options is though value
 					disabled = { this.state.disabled }
 				>

@@ -182,7 +182,7 @@ var Input = React.createClass({
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
 					value = { this.state.value }
-					fieldClassName = { this.props.fieldClassName }
+					className = { this.props.fieldClassName }
 					readOnly = { this.state.readOnly }
 					disabled = { this.state.disabled }
 				/>

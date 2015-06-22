@@ -3,6 +3,7 @@ var Input = require('./formfields/Input')
 var Select = require('./formfields/Select')
 var CheckBox = require('./formfields/CheckBox')
 var Radio = require('./formfields/Radio')
+var Button = require('./formfields/Button')
 var swagger = {
 	schema: require('../example/data/Index.json'),
 	definition: '#/definitions/Expenses'		
@@ -30,9 +31,12 @@ var Form = React.createClass({
         	<Input width={20} isNumber={true} minLength={10} label="Expense Type6"  />
         	<Input label="Disabled" disabled={true} initialValue="DISABLED" />
         	<Input label="ReadOnly" readOnly={true} initialValue="READONLY" />
-        	{/*<CheckBox label="Checkbox1" value="Checkbox1" />
+        	<CheckBox label="Checkbox1" required={true} value="Checkbox1" />
         	<CheckBox label="Checkbox2" checked={true} value="Checkbox2" />
-        	<Radio label="Radio1" name="radio" checked={true} value="Radio1" />
+        	<Button value="Button1" />
+        	<Button value="Button2" type="submit" disabled={true} />
+        	<Button value="Button3" type="reset" />
+        	{/*<Radio label="Radio1" name="radio" checked={true} value="Radio1" />
         	<Radio label="Radio2" name="radio" value="Radio2" />
         	<Radio label="Radio3" name="radio3" value="Radio3" />*/}
         </div>
