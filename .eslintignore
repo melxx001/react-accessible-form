@@ -1,0 +1,8 @@
+# Ignore built files.
+build/**
+.idea/
+config/**
+coverage/**
+node_modules/**
+public/**
+gulpfile.js

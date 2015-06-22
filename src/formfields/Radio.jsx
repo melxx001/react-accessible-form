@@ -1,45 +1,44 @@
 var React = require( 'react' )
 var validator = require( '../validation' )
 var formValidation = new validator()
-var cuid = require( 'cuid' )
+var cuid = require('cuid')
 
-var Select = React.createClass({
+var Radio = React.createClass({
 	propTypes: {
-		required: React.PropTypes.bool,
-		name: React.PropTypes.string,
-		label: React.PropTypes.string,
-		groupClassName: React.PropTypes.string,
-		labelClassName: React.PropTypes.string,
-		errorClassName: React.PropTypes.string,
-		fieldClassName: React.PropTypes.string,
-		validationEvent: React.PropTypes.string,
-		disabled: React.PropTypes.bool,
-		options: React.PropTypes.array,
-		id: React.PropTypes.string,
-		swagger: React.PropTypes.shape({
-			schema: React.PropTypes.object.isRequired,
-			definition: React.PropTypes.string.isRequired,
-		}),
-		field: React.PropTypes.string
+			required: React.PropTypes.bool,
+			name: React.PropTypes.string,
+			label: React.PropTypes.string,
+			groupClassName: React.PropTypes.string,
+			labelClassName: React.PropTypes.string,
+			errorClassName: React.PropTypes.string,
+			fieldClassName: React.PropTypes.string,
+			validationEvent: React.PropTypes.string,
+			readOnly: React.PropTypes.bool,
+			disabled: React.PropTypes.bool,
+			checked: React.PropTypes.bool,
+			id: React.PropTypes.string,
+			swagger: React.PropTypes.shape({
+				schema: React.PropTypes.object.isRequired,
+				definition: React.PropTypes.string.isRequired,
+			}),
+			field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {
-			options: [["",""]],
-			initialValue: '',
+			checked: false,
 			id: cuid()	// Get a unique Id if it's not passed
 		}
 	},
 	getInitialState: function() {
 	    return {
 	    	errors: '',
-			value: this.props.initialValue,
-			isValid: this.props.initialValue ? true : false,
-			disabled: this.props.disabled ? true : false
+			isValid: this.props.value ? true : false,
+			checked: this.props.defaultChecked ? true : false
 	    }
 	},
-	_onChange: function( event ) {
+	onChange: function( event ) {
 		this.setState({
-			value: event.target.value.trim()
+			checked: ( this.state.checked ) ? false : true
 		})
 
 		// Run the parent onChange if it exists
@@ -52,18 +51,7 @@ var Select = React.createClass({
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
-	_onBlur: function( event ) {
-		// Run the parent onBlur if it exists
-		if( this.props.onBlur ){
-			this.props.onBlur(this)
-		}
-
-		// Validate onBlur by default
-		if( !this.props.validationEvent || ( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'blur' ) ){
-			this.validate( this.state.value, event.target.dataset )
-		}
-	},
-	getSwaggerProperties: function( schema , definition ){
+	getSwaggerProperties: function(schema , definition){
 		if( !schema || !definition ){
 			return null
 		}
@@ -79,7 +67,7 @@ var Select = React.createClass({
 
 		return properties
 	},
-	validate: function( value, dataset ){
+	validate: function(value, dataset){
 		var results = []
 		var messages = []
 		var swagger = this.props.swagger
@@ -112,8 +100,6 @@ var Select = React.createClass({
 		var preLabel = undefined
 		var postLabel = undefined
 		var errors = []
-		var options = this.props.options
-		var optionsHtml = []
 
 		if ( this.props.preLabel || this.props.label ){
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
@@ -127,28 +113,22 @@ var Select = React.createClass({
 			})
 		}
 
-		Object.keys(options).forEach(function( option, i ){
-			var choice = options[i]
-			optionsHtml.push( <option key={ 'option' + i } value={ choice[0] }>{ choice[1] }</option> )
-		})
-
 	    return (
             <div className = { this.props.groupClassName }>
             	{ preLabel }
-                <select
+                <input
                 	id = { this.props.id }
+                	type = 'radio' 
 					name = { this.props.name }
 					data-validate-required = { this.props.required }
 					data-isvalid = { this.state.isValid }
-					placeholder = { this.props.placeHolder }
 					onChange = { this._onChange }
-					onBlur = { this._onBlur }
+					value = { this.props.value }
 					fieldClassName = { this.props.fieldClassName }
-					value = { this.state.value }	// Manipulation of the component's options is though value
-					disabled = { this.state.disabled }
-				>
-				{ optionsHtml }
-				</select>
+					readOnly = { this.props.readOnly }
+					disabled = { this.props.disabled }
+					checked = { this.state.checked }
+				/>
 				{ postLabel }
                 { errors }
             </div>
@@ -156,4 +136,4 @@ var Select = React.createClass({
 	}
 })
 
-module.exports = Select
+module.exports = Radio

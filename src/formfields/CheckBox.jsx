@@ -3,57 +3,43 @@ var validator = require( '../validation' )
 var formValidation = new validator()
 var cuid = require('cuid')
 
-var Input = React.createClass({
+var CheckBox = React.createClass({
 	propTypes: {
-		required: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		name: React.PropTypes.string,
-		label: React.PropTypes.string,
-		placeHolder: React.PropTypes.string,
-		minLength: React.PropTypes.number,
-		maxLength: React.PropTypes.number,
-		max: React.PropTypes.number,
-		min: React.PropTypes.number,
-		step: React.PropTypes.number,
-		width: React.PropTypes.number,
-		groupClassName: React.PropTypes.string,
-		labelClassName: React.PropTypes.string,
-		errorClassName: React.PropTypes.string,
-		fieldClassName: React.PropTypes.string,
-		validationEvent: React.PropTypes.string,
-		validationpattern: React.PropTypes.string,
-		isNumber: React.PropTypes.bool,
-		source: React.PropTypes.string,
-		format: React.PropTypes.string,
-		readOnly: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		id: React.PropTypes.string,
-		alt: React.PropTypes.string,
-		swagger: React.PropTypes.shape({
-			schema: React.PropTypes.object.isRequired,
-			definition: React.PropTypes.string.isRequired,
-		}),
-		field: React.PropTypes.string
+			required: React.PropTypes.bool,
+			name: React.PropTypes.string,
+			label: React.PropTypes.string,
+			groupClassName: React.PropTypes.string,
+			labelClassName: React.PropTypes.string,
+			errorClassName: React.PropTypes.string,
+			fieldClassName: React.PropTypes.string,
+			validationEvent: React.PropTypes.string,
+			readOnly: React.PropTypes.bool,
+			disabled: React.PropTypes.bool,
+			checked: React.PropTypes.bool,
+			value: React.PropTypes.string,
+			id: React.PropTypes.string,
+			swagger: React.PropTypes.shape({
+				schema: React.PropTypes.object.isRequired,
+				definition: React.PropTypes.string.isRequired,
+			}),
+			field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
 		return {
-			type: 'text',
-			initialValue: '',
+			checked: false,
 			id: cuid()	// Get a unique Id if it's not passed
 		}
 	},
 	getInitialState: function() {
 	    return {
 	    	errors: '',
-			value: this.props.initialValue,
-			isValid: this.props.initialValue ? true : false,
-			readOnly: this.props.readOnly ? true : false,
-			disabled: this.props.disabled ? true : false
+			isValid: this.props.value ? true : false,
+			checked: this.props.checked ? true : false
 	    }
 	},
 	_onChange: function( event ) {
 		this.setState({
-			value: event.target.value.trim()
+			checked: ( this.state.checked ) ? false : true
 		})
 
 		// Run the parent onChange if it exists
@@ -77,7 +63,7 @@ var Input = React.createClass({
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
-	getSwaggerProperties: function( schema , definition ){
+	getSwaggerProperties: function(schema , definition){
 		if( !schema || !definition ){
 			return null
 		}
@@ -93,7 +79,7 @@ var Input = React.createClass({
 
 		return properties
 	},
-	validate: function( value, dataset ){
+	validate: function(value, dataset){
 		var results = []
 		var messages = []
 		var swagger = this.props.swagger
@@ -123,24 +109,9 @@ var Input = React.createClass({
 		})
 	},
 	render: function () {
-		var type = this.props.type.toLowerCase()
 		var preLabel = undefined
 		var postLabel = undefined
-		var format = this.props.format ? this.props.format.toLowerCase() : ''
 		var errors = []
-
-		//TO DO: Return appropriate component depending on type
-		/*if( type === 'checkbox' ){
-			return (
-				<CheckBox ...this.props />
-			)
-		}
-
-		if( type === 'radio' ){
-			return (
-				<Radio ...this.props />
-			)
-		}*/
 
 		if ( this.props.preLabel || this.props.label ){
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
@@ -159,32 +130,18 @@ var Input = React.createClass({
             	{ preLabel }
                 <input
                 	id = { this.props.id }
-                	type = { type } 
+                	type = 'checkbox'  
 					name = { this.props.name }
-					size = { this.props.width }
 					data-validate-required = { this.props.required }
-					data-validate-minimum-length = { this.props.minLength }
-					data-validate-maximum-length = { this.props.maxLength }
-					data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.validationpattern }
-					data-validate-email = { type === 'email' ? true : undefined }
-					data-validate-password = { type === 'password' ? this.props.validationpattern : undefined }
-					data-validate-telephone = { type === 'tel' ? this.props.validationpattern : undefined }
-					data-validate-float = { format === 'float' ? true : undefined }
-					data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
-					data-validate-number = { this.props.isNumber ? true : undefined }
 					data-isvalid = { this.state.isValid }
-					max = { this.props.max }
-					min = { this.props.min }
-					step = { this.props.step }
-					src = { this.props.source }
-					alt = { this.props.alt }
-					placeholder = { this.props.placeHolder }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
-					value = { this.state.value }
+					value = { this.props.value }
 					fieldClassName = { this.props.fieldClassName }
-					readOnly = { this.state.readOnly }
-					disabled = { this.state.disabled }
+					readOnly = { this.props.readOnly }
+					disabled = { this.props.disabled }
+					checked = { this.state.checked }
+					value = { this.props.value }
 				/>
 				{ postLabel }
                 { errors }
@@ -193,4 +150,4 @@ var Input = React.createClass({
 	}
 })
 
-module.exports = Input
+module.exports = CheckBox
