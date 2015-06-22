@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/melxx001/react-accessible-form",
   "dependencies": {
-    "cuid": "^1.2.5",
     "debug": "^2.2.0",
     "react": "^0.13.3",
     "react-bootstrap": "^0.23.0",

@@ -1,7 +1,6 @@
 var React = require( 'react' )
 var validator = require( '../validation' )
 var formValidation = new validator()
-var cuid = require('cuid')
 
 var CheckBox = React.createClass({
 	propTypes: {
@@ -16,12 +15,11 @@ var CheckBox = React.createClass({
 			disabled: React.PropTypes.bool,
 			checked: React.PropTypes.bool,
 			value: React.PropTypes.string,
-			id: React.PropTypes.string
+			id: React.PropTypes.string.isRequired
 	},
 	getDefaultProps: function() {
 		return {
-			checked: false,
-			id: cuid()	// Get a unique Id if it's not passed
+			checked: false
 		}
 	},
 	getInitialState: function() {

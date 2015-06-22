@@ -1,7 +1,6 @@
 var React = require( 'react' )
 var validator = require( '../validation' )
 var formValidation = new validator()
-var cuid = require( 'cuid' )
 
 var Select = React.createClass({
 	propTypes: {
@@ -15,7 +14,7 @@ var Select = React.createClass({
 		validationEvent: React.PropTypes.string,
 		disabled: React.PropTypes.bool,
 		options: React.PropTypes.array,
-		id: React.PropTypes.string,
+		id: React.PropTypes.string.isRequired,
 		swagger: React.PropTypes.shape({
 			schema: React.PropTypes.object.isRequired,
 			definition: React.PropTypes.string.isRequired,
@@ -25,8 +24,7 @@ var Select = React.createClass({
 	getDefaultProps: function() {
 		return {
 			options: [["",""]],
-			initialValue: '',
-			id: cuid()	// Get a unique Id if it's not passed
+			initialValue: ''
 		}
 	},
 	getInitialState: function() {
@@ -38,8 +36,9 @@ var Select = React.createClass({
 	    }
 	},
 	_onChange: function( event ) {
+		var value = event.target.value.trim()
 		this.setState({
-			value: event.target.value.trim()
+			value: value
 		})
 
 		// Run the parent onChange if it exists
@@ -49,7 +48,7 @@ var Select = React.createClass({
 
 		// Validate on onChange if explicitely set
 		if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
-			this.validate( this.state.value, event.target.dataset )
+			this.validate( value, event.target.dataset )
 		}
 	},
 	_onBlur: function( event ) {
