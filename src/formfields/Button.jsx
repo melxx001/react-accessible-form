@@ -10,20 +10,24 @@ var Button = React.createClass({
 		value: React.PropTypes.string.isRequired,
 		type: React.PropTypes.string
 	},
+	getDefaultProps: function(){
+		return {
+			type: 'button'
+		}
+	},
 	render: function () {
-		var type = ( this.props.type ) ? this.props.type.toLowerCase() : 'button'		
-	    return (
-            <div className = { this.props.groupClassName }>
-                <input
-	            	id = { this.props.id }
-	            	type = { type }
+		return (
+			<div className = { this.props.groupClassName }>
+				<input
+					id = { this.props.id }
+					type = { this.props.type }
 					name = { this.props.name }
 					value = { this.props.value }
 					className = { this.props.fieldClassName }
 					disabled = { this.props.disabled }
 				/>
-            </div>
-	    )
+			</div>
+		)
 	}
 })
 

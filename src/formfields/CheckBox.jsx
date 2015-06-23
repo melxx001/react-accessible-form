@@ -6,6 +6,8 @@ var CheckBox = React.createClass({
 	propTypes: {
 			name: React.PropTypes.string,
 			label: React.PropTypes.string,
+			prelabel: React.PropTypes.string,
+			postlabel: React.PropTypes.string,
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
 			errorClassName: React.PropTypes.string,
@@ -14,7 +16,7 @@ var CheckBox = React.createClass({
 			readOnly: React.PropTypes.bool,
 			disabled: React.PropTypes.bool,
 			checked: React.PropTypes.bool,
-			value: React.PropTypes.string,
+			value: React.PropTypes.string.isRequired,
 			id: React.PropTypes.string.isRequired
 	},
 	getDefaultProps: function() {
@@ -23,9 +25,9 @@ var CheckBox = React.createClass({
 		}
 	},
 	getInitialState: function() {
-	    return {
+		return {
 			checked: this.props.checked ? true : false
-	    }
+		}
 	},
 	_onChange: function( event ) {
 		this.setState({
@@ -46,14 +48,16 @@ var CheckBox = React.createClass({
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
 		}else if ( this.props.postLabel ){
 			postLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.postLabel }</label>
+		}else{
+			console.warn( 'Warning: Failed propType: Required prop `label`, `preLabel` or `postLabel` was not specified in `CheckBox`.' )
 		}
 
-	    return (
-            <div className = { this.props.groupClassName }>
-            	{ preLabel }
-                <input
-                	id = { this.props.id }
-                	type = 'checkbox'  
+		return (
+			<div className = { this.props.groupClassName }>
+				{ preLabel }
+				<input
+					id = { this.props.id }
+					type = 'checkbox'  
 					name = { this.props.name }
 					onChange = { this._onChange }
 					value = { this.props.value }
@@ -63,8 +67,8 @@ var CheckBox = React.createClass({
 					checked = { this.state.checked }
 				/>
 				{ postLabel }
-            </div>
-	    )
+			</div>
+		)
 	}
 })
 

@@ -8,6 +8,8 @@ var Input = React.createClass({
 		type: React.PropTypes.string,
 		name: React.PropTypes.string,
 		label: React.PropTypes.string,
+		prelabel: React.PropTypes.string,
+		postlabel: React.PropTypes.string,
 		placeHolder: React.PropTypes.string,
 		minLength: React.PropTypes.number,
 		maxLength: React.PropTypes.number,
@@ -41,13 +43,13 @@ var Input = React.createClass({
 		}
 	},
 	getInitialState: function() {
-	    return {
-	    	errors: '',
+		 return {
+		 	errors: '',
 			value: this.props.initialValue,
 			isValid: this.props.initialValue ? true : false,
 			readOnly: this.props.readOnly ? true : false,
 			disabled: this.props.disabled ? true : false
-	    }
+		 }
 	},
 	_onChange: function( event ) {
 		var value = event.target.value.trim()
@@ -76,7 +78,18 @@ var Input = React.createClass({
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
-	getSwaggerProperties: function( schema , definition ){
+	_onInput: function( event ) {
+		// Run the parent onInput if it exists
+		if( this.props.onInput ){
+			this.props.onInput(this)
+		}
+
+		// Validate on onInput if explicitely set
+		if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'input' ){
+			this.validate( this.state.value, event.target.dataset )
+		}
+	},
+	_getSwaggerProperties: function( schema , definition ){
 		if( !schema || !definition ){
 			return null
 		}
@@ -99,12 +112,12 @@ var Input = React.createClass({
 
 		if( swagger && swagger.schema && swagger.definition ){
 			if( this.props.field ){
-				let properties = this.getSwaggerProperties( swagger.schema, swagger.definition )
+				let properties = this._getSwaggerProperties( swagger.schema, swagger.definition )
 				if( properties ){
 					results = formValidation.swaggerValidate( value, this.props.field, swagger.schema, properties, swagger.definition )
 				}
 			}else{
-				console.warn( "The property 'field' must be part of this.props for swagger validation. Check if this.props.field is defined." )
+				console.warn( 'Warning: The property `field` must be part of this.props for swagger validation. Check if this.props.field is defined.' )
 			}
 		}else{
 			results = formValidation.validate( value, dataset )
@@ -127,6 +140,7 @@ var Input = React.createClass({
 		var postLabel = undefined
 		var format = this.props.format ? this.props.format.toLowerCase() : ''
 		var errors = []
+		var errorId = undefined
 
 		//TO DO: Return appropriate component depending on type
 		/*if( type === 'checkbox' ){
@@ -145,50 +159,59 @@ var Input = React.createClass({
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
 		}else if ( this.props.postLabel ){
 			postLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.postLabel }</label>
+		}else{
+			console.warn( 'Warning: Failed propType: Required prop `label`, `preLabel` or `postLabel` was not specified in `Input`.' )
 		}
 
 		if( this.state.errors.length > 0 ){
+			errorId = '__' + ( this.props.id ? this.props.id : '' ) + '-errors'
+
 			this.state.errors.forEach( ( error, i ) => {	// used an arrow function to keep the context of this
 				errors.push( <span key={ 'errmessage' + i } className={ this.props.errorClassName }>{ error }</span> )
 			})
 		}
 
-	    return (
-            <div className = { this.props.groupClassName }>
-            	{ preLabel }
-                <input
-                	id = { this.props.id }
-                	type = { type } 
-					name = { this.props.name }
-					size = { this.props.width }
-					data-validate-required = { this.props.required }
-					data-validate-minimum-length = { this.props.minLength }
-					data-validate-maximum-length = { this.props.maxLength }
-					data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.validationpattern }
-					data-validate-email = { type === 'email' ? true : undefined }
-					data-validate-password = { type === 'password' ? this.props.validationpattern : undefined }
-					data-validate-telephone = { type === 'tel' ? this.props.validationpattern : undefined }
-					data-validate-float = { format === 'float' ? true : undefined }
-					data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
-					data-validate-number = { this.props.isNumber ? true : undefined }
-					data-isvalid = { this.state.isValid }
-					max = { this.props.max }
-					min = { this.props.min }
-					step = { this.props.step }
-					src = { this.props.source }
-					alt = { this.props.alt }
-					placeholder = { this.props.placeHolder }
-					onChange = { this._onChange }
-					onBlur = { this._onBlur }
-					value = { this.state.value }
-					className = { this.props.fieldClassName }
-					readOnly = { this.state.readOnly }
-					disabled = { this.state.disabled }
-				/>
-				{ postLabel }
-                { errors }
-            </div>
-	    )
+		 return (
+				<div className = { this.props.groupClassName }>
+					{ preLabel }
+					<input
+						id = { this.props.id }
+						type = { type } 
+						name = { this.props.name }
+						size = { this.props.width }
+						data-validate-required = { this.props.required }
+						data-validate-minimum-length = { this.props.minLength }
+						data-validate-maximum-length = { this.props.maxLength }
+						data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.validationpattern }
+						data-validate-email = { type === 'email' ? true : undefined }
+						data-validate-password = { type === 'password' ? this.props.validationpattern : undefined }
+						data-validate-telephone = { type === 'tel' ? this.props.validationpattern : undefined }
+						data-validate-float = { format === 'float' ? true : undefined }
+						data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
+						data-validate-number = { this.props.isNumber ? true : undefined }
+						data-isvalid = { this.state.isValid }
+						aria-invalid = { !this.state.isValid }
+						aria-required = { this.props.required }
+						aria-describedby = { errorId }
+						max = { this.props.max }
+						min = { this.props.min }
+						step = { this.props.step }
+						src = { this.props.source }
+						alt = { this.props.alt }
+						placeholder = { this.props.placeHolder }
+						onChange = { this._onChange }
+						onBlur = { this._onBlur }
+						value = { this.state.value }
+						className = { this.props.fieldClassName }
+						readOnly = { this.state.readOnly }
+						disabled = { this.state.disabled }
+					/>
+					{ postLabel }
+					<span id = { errorId } >
+						{ errors }
+					</span>
+				</div>
+		 )
 	}
 })
 

@@ -7,6 +7,8 @@ var Select = React.createClass({
 		required: React.PropTypes.bool,
 		name: React.PropTypes.string,
 		label: React.PropTypes.string,
+		prelabel: React.PropTypes.string,
+		postlabel: React.PropTypes.string,
 		groupClassName: React.PropTypes.string,
 		labelClassName: React.PropTypes.string,
 		errorClassName: React.PropTypes.string,
@@ -19,6 +21,7 @@ var Select = React.createClass({
 			schema: React.PropTypes.object.isRequired,
 			definition: React.PropTypes.string.isRequired,
 		}),
+		initialValue: React.PropTypes.string,
 		field: React.PropTypes.string
 	},
 	getDefaultProps: function() {
@@ -28,12 +31,12 @@ var Select = React.createClass({
 		}
 	},
 	getInitialState: function() {
-	    return {
-	    	errors: '',
+		return {
+			errors: '',
 			value: this.props.initialValue,
 			isValid: this.props.initialValue ? true : false,
 			disabled: this.props.disabled ? true : false
-	    }
+		}
 	},
 	_onChange: function( event ) {
 		var value = event.target.value.trim()
@@ -62,7 +65,7 @@ var Select = React.createClass({
 			this.validate( this.state.value, event.target.dataset )
 		}
 	},
-	getSwaggerProperties: function( schema , definition ){
+	_getSwaggerProperties: function( schema , definition ){
 		if( !schema || !definition ){
 			return null
 		}
@@ -85,12 +88,12 @@ var Select = React.createClass({
 
 		if( swagger && swagger.schema && swagger.definition ){
 			if( this.props.field ){
-				let properties = this.getSwaggerProperties( swagger.schema, swagger.definition )
+				let properties = this._getSwaggerProperties( swagger.schema, swagger.definition )
 				if( properties ){
 					results = formValidation.swaggerValidate( value, this.props.field, swagger.schema, properties, swagger.definition )
 				}
 			}else{
-				console.warn( "The property 'field' must be part of this.props for swagger validation. Check if this.props.field is defined." )
+				console.warn( 'Warning: The property `field` must be part of this.props for swagger validation. Check if this.props.field is defined.' )
 			}
 		}else{
 			results = formValidation.validate( value, dataset )
@@ -113,14 +116,19 @@ var Select = React.createClass({
 		var errors = []
 		var options = this.props.options
 		var optionsHtml = []
+		var errorId = undefined
 
 		if ( this.props.preLabel || this.props.label ){
 			preLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.preLabel || this.props.label }</label>
 		}else if ( this.props.postLabel ){
 			postLabel = <label htmlFor={ this.props.id } className={ this.props.labelClassName }>{ this.props.postLabel }</label>
+		}else{
+			console.warn( 'Warning: Failed propType: Required prop `label`, `preLabel` or `postLabel` was not specified in `Select`.' )
 		}
 
 		if( this.state.errors.length > 0 ){
+			errorId = '__' + ( this.props.id ? this.props.id : '' ) + '-errors'
+
 			this.state.errors.forEach( ( error, i ) => {	// used an arrow function to keep the context of this
 				errors.push( <span key={ 'errmessage' + i } className={ this.props.errorClassName }>{ error }</span> )
 			})
@@ -131,15 +139,17 @@ var Select = React.createClass({
 			optionsHtml.push( <option key={ 'option' + i } value={ choice[0] }>{ choice[1] }</option> )
 		})
 
-	    return (
-            <div className = { this.props.groupClassName }>
-            	{ preLabel }
-                <select
-                	id = { this.props.id }
+		return (
+			<div className = { this.props.groupClassName }>
+				{ preLabel }
+				<select
+					id = { this.props.id }
 					name = { this.props.name }
 					data-validate-required = { this.props.required }
 					data-isvalid = { this.state.isValid }
-					placeholder = { this.props.placeHolder }
+					aria-invalid = { !this.state.isValid }
+					aria-required = { this.props.required }
+					aria-describedby = { errorId }
 					onChange = { this._onChange }
 					onBlur = { this._onBlur }
 					className = { this.props.fieldClassName }
@@ -149,9 +159,11 @@ var Select = React.createClass({
 				{ optionsHtml }
 				</select>
 				{ postLabel }
-                { errors }
-            </div>
-	    )
+				<span id = { errorId } >
+					{ errors }
+				</span>
+			</div>
+		)
 	}
 })
 
