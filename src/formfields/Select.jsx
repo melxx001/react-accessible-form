@@ -49,7 +49,7 @@ var Select = React.createClass({
 			this.props.onChange( this )
 		}
 
-		// Validate on onChange if explicitely set
+		// Validate on onChange if explicitly set
 		if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
 			this.validate( value, event.target.dataset )
 		}

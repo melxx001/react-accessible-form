@@ -22,7 +22,7 @@ var Input = React.createClass({
 		errorClassName: React.PropTypes.string,
 		fieldClassName: React.PropTypes.string,
 		validationEvent: React.PropTypes.string,
-		validationpattern: React.PropTypes.string,
+		validationPattern: React.PropTypes.string,
 		isNumber: React.PropTypes.bool,
 		source: React.PropTypes.string,
 		format: React.PropTypes.string,
@@ -62,7 +62,7 @@ var Input = React.createClass({
 			this.props.onChange( this )
 		}
 
-		// Validate on onChange if explicitely set
+		// Validate on onChange if explicitly set
 		if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
 			this.validate( value, event.target.dataset )
 		}
@@ -84,7 +84,7 @@ var Input = React.createClass({
 			this.props.onInput(this)
 		}
 
-		// Validate on onInput if explicitely set
+		// Validate on onInput if explicitly set
 		if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'input' ){
 			this.validate( this.state.value, event.target.dataset )
 		}
@@ -182,10 +182,10 @@ var Input = React.createClass({
 						data-validate-required = { this.props.required }
 						data-validate-minimum-length = { this.props.minLength }
 						data-validate-maximum-length = { this.props.maxLength }
-						data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.validationpattern }
+						data-validate-pattern = { type === 'password' || type === 'tel' ? undefined : this.props.validationPattern }
 						data-validate-email = { type === 'email' ? true : undefined }
-						data-validate-password = { type === 'password' ? this.props.validationpattern : undefined }
-						data-validate-telephone = { type === 'tel' ? this.props.validationpattern : undefined }
+						data-validate-password = { type === 'password' ? this.props.validationPattern : undefined }
+						data-validate-telephone = { type === 'tel' ? this.props.validationPattern : undefined }
 						data-validate-float = { format === 'float' ? true : undefined }
 						data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
 						data-validate-number = { this.props.isNumber ? true : undefined }
