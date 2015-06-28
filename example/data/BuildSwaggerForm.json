@@ -27,13 +27,19 @@
                         "schema": {
                             "$ref": "#/definitions/Expenses"
                         }
+                    },
+                    "403": {
+                        "description": "Successful request.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
-        "Expenses": {
+        "Error": {
             "properties": {
                 "reportName": {
                     "type" : "string",

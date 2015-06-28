@@ -1,4 +1,4 @@
-var React = require( 'react' )
+var React = require( 'react' );
 
 var Button = React.createClass({
 	propTypes: {
@@ -13,7 +13,7 @@ var Button = React.createClass({
 	getDefaultProps: function(){
 		return {
 			type: 'button'
-		}
+		};
 	},
 	render: function () {
 		return (
@@ -27,8 +27,8 @@ var Button = React.createClass({
 					disabled = { this.props.disabled }
 				/>
 			</div>
-		)
+		);
 	}
-})
+});
 
-module.exports = Button
+module.exports = Button;

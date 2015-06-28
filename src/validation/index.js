@@ -83,11 +83,17 @@ Validator.validation = {
 	validateRequired: function( input = "" ) {
 		return getValidationResult( input, 'This field is required!' );
 	},
-	validateMinimumLength: function( input = {length: 0}, length = 0 ) {
-		return getValidationResult( input.length >= parseInt( length ) || parseInt( length ) === 0, ['Minimum of', length, 'characters' ].join( " " ) );
+    validateMinimumLength: function( input = {length: 0}, length = 0 ) {
+        return getValidationResult( input.length >= parseInt( length ) || parseInt( length ) === 0, [ 'Minimum of', length, 'characters' ].join( " " ) );
+    },
+    validateMaximumLength: function( input = {length: 0}, length = 0 ) {
+        return getValidationResult( input.length <= parseInt( length ) || parseInt( length ) === 0, [ 'Maximum of', length, 'characters' ].join( " " ) );
+    },
+	validateMinimum: function( input = 0, length = 0 ) {
+		return getValidationResult( input >= parseInt( length ), [ 'Minimum of', length ].join( " " ) );
 	},
-	validateMaximumLength: function( input = "", length = 0 ) {
-		return getValidationResult( input.length <= parseInt( length ) || parseInt( length ) === 0, ['Maximum of', length, 'characters' ].join( " " ) );
+	validateMaximum: function( input = 0, length = 0 ) {
+		return getValidationResult( input <= parseInt( length ), [ 'Maximum of', length ].join( " " ) );
 	},
 	validatePattern: function( input = "", pattern = "" ) {
 		return getValidationResult( new RegExp( pattern, 'g' ).test( input ), 'Does not match ' + pattern );
