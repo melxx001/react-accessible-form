@@ -41,17 +41,17 @@ var Select = React.createClass({
         var value = event.target.value.trim();
         this.setState({
             value: value
+        }, () => {
+            // Run the parent onChange if it exists
+            if(this.props.onChange){
+                this.props.onChange( this );
+            }
+
+            // Validate on onChange if explicitly set
+            if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
+                this._validate( this.state.value, event.target.dataset );
+            }
         });
-
-        // Run the parent onChange if it exists
-        if(this.props.onChange){
-            this.props.onChange( this );
-        }
-
-        // Validate on onChange if explicitly set
-        if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
-            this.validate( value, event.target.dataset );
-        }
     },
     _onBlur: function( event ) {
         // Run the parent onBlur if it exists
@@ -61,7 +61,7 @@ var Select = React.createClass({
 
         // Validate onBlur by default
         if( !this.props.validationEvent || ( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'blur' ) ){
-            this.validate( this.state.value, event.target.dataset );
+            this._validate( this.state.value, event.target.dataset );
         }
     },
     _getSwaggerProperties: function( schema , definition ){
@@ -80,7 +80,7 @@ var Select = React.createClass({
 
         return properties;
     },
-    validate: function( value, dataset ){
+    _validate: function( value, dataset ){
         var results = [];
         var messages = [];
         var swagger = this.props.swagger;

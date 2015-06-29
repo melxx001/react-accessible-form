@@ -3,180 +3,180 @@
 var validation = require( 'validator' );
 
 function getValidationResult( valid = true, message = "" ){
-	if( valid ){
-		return { error: false, message: '' };
-	}
+    if( valid ){
+        return { error: false, message: '' };
+    }
 
-	return { error: true, message: message };
+    return { error: true, message: message };
 }
 
 function parseDate( date , type = "date"){
 
-	function addZero(num) {
-		var num = parseInt( num );
-		return (num >= 0 && num < 10) ? "0" + num : num.toString() ;
-	}
+    function addZero(num) {
+        var num = parseInt( num );
+        return (num >= 0 && num < 10) ? "0" + num : num.toString() ;
+    }
 
-	var d = new Date( date );
-	var fullDate =  [
-		d.getFullYear(),
-		addZero( d.getMonth() + 1 ),
-		addZero( d.getDate() )
-	].join( '-' );
+    var d = new Date( date );
+    var fullDate =  [
+        d.getFullYear(),
+        addZero( d.getMonth() + 1 ),
+        addZero( d.getDate() )
+    ].join( '-' );
 
-	if( type === 'date-time' ){
-		let fullTime = [
-			addZero( d.getHours() ), 
-			addZero( d.getMinutes() ),
-			addZero( d.getSeconds() )
-		].join(":") + 'Z';
+    if( type === 'date-time' ){
+        let fullTime = [
+            addZero( d.getHours() ), 
+            addZero( d.getMinutes() ),
+            addZero( d.getSeconds() )
+        ].join(":") + 'Z';
 
-		return [
-			fullDate,
-			'T',
-			fullTime
-		].join( '' );
-	}
+        return [
+            fullDate,
+            'T',
+            fullTime
+        ].join( '' );
+    }
 
-	return fullDate;
+    return fullDate;
 }
 
 function updateValueFormat(value , type = "string", format = ""){
-	type = type.toLowerCase();
-	format = format.toLowerCase();
+    type = type.toLowerCase();
+    format = format.toLowerCase();
 
-	var dataType = {
-		'number': function( value = "", format ){
-			// Format can be float or double
-			return ( format === 'float' || format === 'double' ) ? parseFloat( value ) : parseInt( value );
-		},
-		'integer': function( value = "", format ){
-			// Format can be int32 or int64
-			return parseInt( value );
-		},
-		'string': function( value , format ){
-			// Format can be string, bytes, date, date-time or password
-			return ( format === 'date' && value ) ? parseDate( value ) : 
-				( format === 'date-time' && value ) ? parseDate( value , 'date-time') : value;
-		},
-		'boolean': function( value, format ){ 
-			return Boolean( value );
-		}
-	};
+    var dataType = {
+        'number': function( value = "", format ){
+            // Format can be float or double
+            return ( format === 'float' || format === 'double' ) ? parseFloat( value ) : parseInt( value );
+        },
+        'integer': function( value = "", format ){
+            // Format can be int32 or int64
+            return parseInt( value );
+        },
+        'string': function( value , format ){
+            // Format can be string, bytes, date, date-time or password
+            return ( format === 'date' && value ) ? parseDate( value ) : 
+                ( format === 'date-time' && value ) ? parseDate( value , 'date-time') : value;
+        },
+        'boolean': function( value, format ){ 
+            return Boolean( value );
+        }
+    };
 
-	var update = dataType[ type ];
+    var update = dataType[ type ];
 
-	if( update ){
-		return update( value, format );
-	}else{
-		console.warn( 'Warning: Unknown type ' + type + ' in updateValueFormat' );
-	}
-	
-	return value;
+    if( update ){
+        return update( value, format );
+    }else{
+        console.warn( 'Warning: Unknown type ' + type + ' in updateValueFormat' );
+    }
+    
+    return value;
 }
 
 function Validator () {
-	this.errors = [];
+    this.errors = [];
 }
 
 Validator.validation = {
-	validateRequired: function( input = "" ) {
-		return getValidationResult( input, 'This field is required!' );
-	},
+    validateRequired: function( input = "" ) {
+        return getValidationResult( input, 'This field is required!' );
+    },
     validateMinimumLength: function( input = {length: 0}, length = 0 ) {
         return getValidationResult( input.length >= parseInt( length ) || parseInt( length ) === 0, [ 'Minimum of', length, 'characters' ].join( " " ) );
     },
     validateMaximumLength: function( input = {length: 0}, length = 0 ) {
         return getValidationResult( input.length <= parseInt( length ) || parseInt( length ) === 0, [ 'Maximum of', length, 'characters' ].join( " " ) );
     },
-	validateMinimum: function( input = 0, length = 0 ) {
-		return getValidationResult( input >= parseInt( length ), [ 'Minimum of', length ].join( " " ) );
-	},
-	validateMaximum: function( input = 0, length = 0 ) {
-		return getValidationResult( input <= parseInt( length ), [ 'Maximum of', length ].join( " " ) );
-	},
-	validatePattern: function( input = "", pattern = "" ) {
-		return getValidationResult( new RegExp( pattern, 'g' ).test( input ), 'Does not match ' + pattern );
-	},
-	validateEmail: function( input = "" ) {
-		return getValidationResult( validation.isEmail( input ), "Email Error" );
-	},
-	validateUrl: function( input = "" ) {
-		return getValidationResult( validation.isURL( input ), "Url Error" );
-	},
-	validateDate: function( input = "" ) {
-		return getValidationResult( validation.isDate( input ), "Date Error" );
-	},
-	validateTelephone: function( input = "", pattern = "" ) {
-		return getValidationResult( new RegExp( pattern, 'g' ).test( input ), "Invalid Telephone. Does not match " + pattern );
-	},
-	validatePassword: function( input = "", pattern = "" ) {
-		return getValidationResult( new RegExp( pattern, 'g' ).test( input ), "Invalid Password. Does not match " + pattern );
-	},
-	validateDateTime: function( input = "" ) {
-		return getValidationResult( validation.isDate( input ), "Date Time Error" );
-	},
-	validateFloat: function( input = "" ) {
-		return getValidationResult( validation.isFloat( input ), "Float Error" );
-	},
-	validateInteger: function( input = "" ) {
-		return getValidationResult( validation.isInt( input ), "Integer Error" );
-	},
-	validateNumber: function( input = "" ) {
-		return getValidationResult( validation.isNumeric( input ), "Number Error" );
-	}
+    validateMinimum: function( input = 0, length = 0 ) {
+        return getValidationResult( input >= parseInt( length ), [ 'Minimum of', length ].join( " " ) );
+    },
+    validateMaximum: function( input = 0, length = 0 ) {
+        return getValidationResult( input <= parseInt( length ), [ 'Maximum of', length ].join( " " ) );
+    },
+    validatePattern: function( input = "", pattern = "" ) {
+        return getValidationResult( new RegExp( pattern, 'g' ).test( input ), 'Does not match ' + pattern );
+    },
+    validateEmail: function( input = "" ) {
+        return getValidationResult( validation.isEmail( input ), "Email Error" );
+    },
+    validateUrl: function( input = "" ) {
+        return getValidationResult( validation.isURL( input ), "Url Error" );
+    },
+    validateDate: function( input = "" ) {
+        return getValidationResult( validation.isDate( input ), "Date Error" );
+    },
+    validateTelephone: function( input = "", pattern = "" ) {
+        return getValidationResult( new RegExp( pattern, 'g' ).test( input ), "Invalid Telephone. Does not match " + pattern );
+    },
+    validatePassword: function( input = "", pattern = "" ) {
+        return getValidationResult( new RegExp( pattern, 'g' ).test( input ), "Invalid Password. Does not match " + pattern );
+    },
+    validateDateTime: function( input = "" ) {
+        return getValidationResult( validation.isDate( input ), "Date Time Error" );
+    },
+    validateFloat: function( input = "" ) {
+        return getValidationResult( validation.isFloat( input ), "Float Error" );
+    },
+    validateInteger: function( input = "" ) {
+        return getValidationResult( validation.isInt( input ), "Integer Error" );
+    },
+    validateNumber: function( input = "" ) {
+        return getValidationResult( validation.isNumeric( input ), "Number Error" );
+    }
 }
 
 Validator.prototype.validate = function( input = "", attributes = {} ) {
-	if( !attributes ){
-		console.warn( 'Warning: One or more Validator.validate parameters missing or empty' );
-	}
+    if( !attributes ){
+        console.warn( 'Warning: One or more Validator.validate parameters missing or empty' );
+    }
 
-	var result = [];
-	Object.keys( attributes ).forEach( function( attr ){
-		var validate = Validator.validation[ attr ];
-		if( validate ){
-			result.push( validate( input, attributes[ attr ] ) );
-		}
-	}.bind( this ) );
+    var result = [];
+    Object.keys( attributes ).forEach( function( attr ){
+        var validate = Validator.validation[ attr ];
+        if( validate ){
+            result.push( validate( input, attributes[ attr ] ) );
+        }
+    }.bind( this ) );
 
-	return result;
+    return result;
 }
 
 Validator.prototype.swaggerValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {
-	var errors = [];
+    var errors = [];
 
-	// require( 'swagger-tools' ) causes issues so I'm commenting this section out
-	/*if( schema && definition && Object.getOwnPropertyNames( propertyObj ).length > 0 && field ){
-		let swaggerTools = require( 'swagger-tools' );
-		let spec = swaggerTools.specs.v2;
-		let properties = {};
+    // require( 'swagger-tools' ) causes issues so I'm commenting this section out
+    /*if( schema && definition && Object.getOwnPropertyNames( propertyObj ).length > 0 && field ){
+        let swaggerTools = require( 'swagger-tools' );
+        let spec = swaggerTools.specs.v2;
+        let properties = {};
 
-		Object.keys(propertyObj).forEach( ( item ) => {
-			properties[item] = "";
-		});
+        Object.keys(propertyObj).forEach( ( item ) => {
+            properties[item] = "";
+        });
 
-		properties[field] = updateValueFormat( fieldValue, propertyObj[field].type, propertyObj[field].format);
+        properties[field] = updateValueFormat( fieldValue, propertyObj[field].type, propertyObj[field].format);
 
-		// Required doesn't seem to validate correctly yet.
-		// A required field of type string will not error out if empty ??
-		// A required field of type number will error out as invalid type
-		// Still investigating but perhaps a bug in the swagger-tools module
+        // Required doesn't seem to validate correctly yet.
+        // A required field of type string will not error out if empty ??
+        // A required field of type number will error out as invalid type
+        // Still investigating but perhaps a bug in the swagger-tools module
 
-		spec.validateModel( schema, definition, properties, ( err, result ) => {
-			if ( result && result.errors ) {
-				result.errors.forEach(  ( error ) => {
-					if ( error.path[0] === field ) {
-						errors.push( getValidationResult( false , error.message ) );
-					}
-				});
-			}
-		})
-	}else{
-		console.warn( 'Warning: One or more Validator.swaggerValidate parameters missing or empty' );
-	}*/
+        spec.validateModel( schema, definition, properties, ( err, result ) => {
+            if ( result && result.errors ) {
+                result.errors.forEach(  ( error ) => {
+                    if ( error.path[0] === field ) {
+                        errors.push( getValidationResult( false , error.message ) );
+                    }
+                });
+            }
+        })
+    }else{
+        console.warn( 'Warning: One or more Validator.swaggerValidate parameters missing or empty' );
+    }*/
 
-	return errors;
+    return errors;
 }
 
 
