@@ -13,6 +13,19 @@ var Form = React.createClass({
   _onChange: function(){
   	console.log("Parent _onchange")
   },
+  _validate: function(input){
+  	if(input > 100){
+  		return {
+	  		result: false,
+	  		message: "Custom validation failed"
+	  	};
+  	}else{
+  		return {
+	  		result: true,
+	  		message: ""
+	  	};
+  	}
+  },
   render: function() {
     return (
     	<div> 
@@ -39,6 +52,11 @@ var Form = React.createClass({
         	{/*<Radio label="Radio1" name="radio" checked={true} value="Radio1" />
         	<Radio label="Radio2" name="radio" value="Radio2" />
         	<Radio label="Radio3" name="radio3" value="Radio3" />*/}
+        	<Input 
+        		id="id-15" 
+        		label="customvalidation"
+        		customValidation={this._validate}
+        	/>
         </div>
       
     );

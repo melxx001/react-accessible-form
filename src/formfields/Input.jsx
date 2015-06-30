@@ -34,7 +34,8 @@ var Input = React.createClass({
             schema: React.PropTypes.object.isRequired,
             definition: React.PropTypes.string.isRequired,
         }),
-        field: React.PropTypes.string
+        field: React.PropTypes.string,
+        customValidation: React.PropTypes.func
     },
     getDefaultProps: function() {
         return {
@@ -118,7 +119,7 @@ var Input = React.createClass({
                 console.warn( 'Warning: The property `field` must be part of this.props for swagger validation. Check if this.props.field is defined.' );
             }
         }else{
-            results = formValidation.validate( value, dataset );
+            results = formValidation.validate( value, dataset, this.props.customValidation );
         }
 
         results.forEach(function( result ){

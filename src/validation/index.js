@@ -127,7 +127,7 @@ Validator.validation = {
     }
 }
 
-Validator.prototype.validate = function( input = "", attributes = {} ) {
+Validator.prototype.validate = function( input = "", attributes = {} , customValidation ) {
     if( !attributes ){
         console.warn( 'Warning: One or more Validator.validate parameters missing or empty' );
     }
@@ -139,6 +139,16 @@ Validator.prototype.validate = function( input = "", attributes = {} ) {
             result.push( validate( input, attributes[ attr ] ) );
         }
     }.bind( this ) );
+
+    // Add custom validation
+    if( customValidation ){
+    	let customResult = customValidation( input );
+    	if( typeof customResult.result === undefined ){
+    		console.warn( 'Warning: custom validation does not have valid inputs. Object returned should have a result and message property. Ex: `{ result: true, message: "message" }`' );
+    	}
+
+    	result.push( getValidationResult( customResult.result, customResult.message  ) );
+    }
 
     return result;
 }
