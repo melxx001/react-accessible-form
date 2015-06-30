@@ -6,27 +6,27 @@ var schema = require('../example/data/BuildSwaggerForm.json')
 
 // Form field types
 var formFieldType = {
-	string : "text",
-	number: "number",
-	email: "email",
-	password: "password",
-	object: {
-		date: "date"
-	}
+    string : "text",
+    number: "number",
+    email: "email",
+    password: "password",
+    object: {
+        date: "date"
+    }
 }
 
 // Get the form field type
 function getType(type = "string", format = ""){
-	type = type.toLowerCase()
-	if(type === 'object' && format){
-		return formFieldType[type][format]
-	}
+    type = type.toLowerCase()
+    if(type === 'object' && format){
+        return formFieldType[type][format]
+    }
 
-	return formFieldType[type]
+    return formFieldType[type]
 }
 
 function localization(type){
-	return type + " Field"
+    return type + " Field"
 }
 
 // Will be in a different file. 
@@ -34,23 +34,23 @@ function localization(type){
 var definitions = schema.definitions
 var formItems = []
 Object.keys(definitions).map((form) => {
-	var properties = definitions[form].properties
-	Object.keys(properties).map((item,i) => {
-		var formField = properties[item]
-		formItems.push(
-			<Input schema={schema} properties={properties} key={item} type={getType(formField.type, formField.format)} label={localization(item)} field={item} />
-		)
-	})
+    var properties = definitions[form].properties
+    Object.keys(properties).map((item,i) => {
+        var formField = properties[item]
+        formItems.push(
+            <Input schema={schema} properties={properties} key={item} type={getType(formField.type, formField.format)} label={localization(item)} field={item} />
+        )
+    })
 })
 
 var Form = React.createClass({
-	render: function() {
-		return (
-			<div> 
-				{formItems}
-			</div>
-		)
-	}
+    render: function() {
+        return (
+            <div> 
+                {formItems}
+            </div>
+        )
+    }
 })
 
 
