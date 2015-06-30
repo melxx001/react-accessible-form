@@ -1,9 +1,5 @@
 var React = require( 'react' )
-var Input = require( './formfields/Input' )
-var Select = require( './formfields/Select' )
-var CheckBox = require( './formfields/CheckBox' )
-var Radio = require( './formfields/Radio' )
-var Button = require( './formfields/Button' )
+var { Input, Select, CheckBox, Button, Radio } = require( './FormFields' );
 var swagger = {
 	schema: require( '../example/data/Index.json' ),
 	definition: '#/definitions/Expenses'		
@@ -53,7 +49,7 @@ var Form = React.createClass({
         	<Radio label="Radio2" name="radio" value="Radio2" />
         	<Radio label="Radio3" name="radio3" value="Radio3" />*/}
         	<Input 
-        		id="id-15" 
+        		id="id-21" 
         		label="customvalidation"
         		customValidation={this._validate}
         	/>

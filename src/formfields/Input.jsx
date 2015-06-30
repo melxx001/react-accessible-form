@@ -1,6 +1,6 @@
-var React = require( 'react' )
-var validator = require( '../validation' )
-var formValidation = new validator()
+var React = require( 'react' );
+var validator = require( '../validation' );
+var formValidation = new validator();
 
 var Input = React.createClass({
     propTypes: {
