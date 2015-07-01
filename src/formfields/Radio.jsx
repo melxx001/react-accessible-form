@@ -1,12 +1,11 @@
 var React = require( 'react' )
 var validator = require( '../validation' )
 var formValidation = new validator()
-var cuid = require('cuid')
 
 var Radio = React.createClass({
 	propTypes: {
 			required: React.PropTypes.bool,
-			name: React.PropTypes.string,
+			name: React.PropTypes.string.isRequired,
 			label: React.PropTypes.string,
 			groupClassName: React.PropTypes.string,
 			labelClassName: React.PropTypes.string,
@@ -25,8 +24,7 @@ var Radio = React.createClass({
 	},
 	getDefaultProps: function() {
 		return {
-			checked: false,
-			id: cuid()	// Get a unique Id if it's not passed
+			checked: false
 		}
 	},
 	getInitialState: function() {

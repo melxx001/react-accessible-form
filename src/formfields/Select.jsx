@@ -5,7 +5,7 @@ var formValidation = new validator();
 var Select = React.createClass({
     propTypes: {
         required: React.PropTypes.bool,
-        name: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
         label: React.PropTypes.node,
         prelabel: React.PropTypes.node,
         postlabel: React.PropTypes.node,

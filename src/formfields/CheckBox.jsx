@@ -4,7 +4,7 @@ var formValidation = new validator()
 
 var CheckBox = React.createClass({
 	propTypes: {
-			name: React.PropTypes.string,
+			name: React.PropTypes.string.isRequired,
 			label: React.PropTypes.node,
 			prelabel: React.PropTypes.node,
 			postlabel: React.PropTypes.node,

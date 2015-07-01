@@ -6,7 +6,7 @@ var Input = React.createClass({
     propTypes: {
         required: React.PropTypes.bool,
         type: React.PropTypes.string,
-        name: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
         label: React.PropTypes.node,
         prelabel: React.PropTypes.node,
         postlabel: React.PropTypes.node,
