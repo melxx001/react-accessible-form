@@ -5,7 +5,7 @@ var formValidation = new validator();
 var Select = React.createClass({
     propTypes: {
         required: React.PropTypes.bool,
-        name: React.PropTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired, 
         label: React.PropTypes.node,
         prelabel: React.PropTypes.node,
         postlabel: React.PropTypes.node,
@@ -17,7 +17,7 @@ var Select = React.createClass({
         disabled: React.PropTypes.bool,
         options: React.PropTypes.array,
         id: React.PropTypes.string.isRequired,
-        swagger: React.PropTypes.shape({
+        schemaInfo: React.PropTypes.shape({
             schema: React.PropTypes.object.isRequired,
             definition: React.PropTypes.string.isRequired,
         }),
@@ -28,7 +28,12 @@ var Select = React.createClass({
     getDefaultProps: function() {
         return {
             options: [["",""]],
-            initialValue: ''
+            initialValue: '',
+            schemaInfo: {
+                schema: {},
+                definition: ''
+            },
+            field: '' 
         };
     },
     getInitialState: function() {
@@ -41,7 +46,6 @@ var Select = React.createClass({
     _onChange: function( event ) {
         var target = event.target;
         var value = target.value.trim();
-
         this.setState({
             value: value
         }, () => {
@@ -64,42 +68,20 @@ var Select = React.createClass({
 
         // Validate onBlur by default
         if( !this.props.validationEvent || ( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'blur' ) ){
-            this._validate( this.state.value, event.target.dataset );
+            this._validate( this.state.value, (event.target) ? event.target.dataset : {} );
         }
-    },
-    _getSwaggerProperties: function( schema , definition ){
-        if( !schema || !definition ){
-            return null;
-        }
-
-        var definitions = schema.definitions;
-        var properties = {};
-
-        Object.keys(definitions).map( ( def ) => {
-            if( def === definition.replace( '#/definitions/' , '' ) ){
-                properties = definitions[ def ].properties;
-            }
-        });
-
-        return properties;
     },
     _validate: function( value, dataset ){
         var results = [];
         var messages = [];
-        var swagger = this.props.swagger;
+        var schemaInfo = this.props.schemaInfo;
 
-        if( swagger && swagger.schema && swagger.definition ){
-            if( this.props.field ){
-                let properties = this._getSwaggerProperties( swagger.schema, swagger.definition );
-                if( properties ){
-                    results = formValidation.swaggerValidate( value, this.props.field, swagger.schema, properties, swagger.definition );
-                }
-            }else{
-                console.warn( 'Warning: The property `field` must be part of this.props for swagger validation. Check if this.props.field is defined.' );
-            }
-        }else{
-            results = formValidation.validate( value, dataset, this.props.customValidation );
-        }
+        results = formValidation.validate( value, dataset, this.props.customValidation, {
+            value: value, 
+            field: this.props.field, 
+            schema: schemaInfo.schema, 
+            definition: schemaInfo.definition
+        });
 
         results.forEach(function( result ){
             if( result.error ){
@@ -155,7 +137,7 @@ var Select = React.createClass({
                     id = { this.props.id }
                     name = { this.props.name }
                     data-validate-required = { this.props.required }
-                    data-isvalid = { this.state.isValid }
+                    data-is-valid = { this.state.isValid }
                     aria-invalid = { !this.state.isValid }
                     aria-required = { this.props.required }
                     aria-describedby = { errorId }

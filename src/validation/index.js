@@ -75,6 +75,23 @@ function updateValueFormat(value , type = "string", format = ""){
     return value;
 }
 
+function getSchemaProperties( schema , definition ){
+    if( !schema || !definition ){
+        return null;
+    }
+
+    var definitions = schema.definitions;
+    var properties = {};
+
+    Object.keys(definitions).map( ( def ) => {
+        if( def === definition.replace( '#/definitions/' , '' ) ){
+            properties = definitions[ def ].properties;
+        }
+    })
+
+    return properties;
+}
+
 function Validator () {
     this.errors = [];
 }
@@ -127,33 +144,46 @@ Validator.validation = {
     }
 }
 
-Validator.prototype.validate = function( input = "", attributes = {} , customValidation ) {
+Validator.prototype.validate = function( input = "", attributes = {} , customValidation, schemaInfo = {} ) {
     if( !attributes ){
         console.warn( 'Warning: One or more Validator.validate parameters missing or empty' );
     }
 
     var result = [];
-    Object.keys( attributes ).forEach( function( attr ){
-        var validate = Validator.validation[ attr ];
-        if( validate ){
-            result.push( validate( input, attributes[ attr ] ) );
+
+    // Eventually remove this and add data-attributes when generating the form
+    if( schemaInfo && schemaInfo.schema && schemaInfo.definition ){
+        if( schemaInfo.field ){
+            let properties = getSchemaProperties( schemaInfo.schema, schemaInfo.definition );
+            if( properties ){
+                results = this.schemaInfoValidate( value, schemaInfo.field, schemaInfo.schema, properties, schemaInfo.definition );
+            }
+        }else{
+            console.warn( 'Warning: The property `field` must be available for schema based validation. Check if `this.props.field` is defined in your component.' );
         }
-    }.bind( this ) );
+    }else{
+        Object.keys( attributes ).forEach( function( attr ){
+            var validate = Validator.validation[ attr ];
+            if( validate ){
+                result.push( validate( input, attributes[ attr ] ) );
+            }
+        }.bind( this ) );
+    }
 
     // Add custom validation
     if( customValidation ){
-    	let customResult = customValidation( input );
-    	if( typeof customResult.result === undefined ){
-    		console.warn( 'Warning: custom validation does not have valid inputs. Object returned should have a result and message property. Ex: `{ result: true, message: "message" }`' );
-    	}
+        let customResult = customValidation( input );
+        if( typeof customResult.result === undefined ){
+            console.warn( 'Warning: custom validation does not have valid inputs. Object returned should have a result and message property. Ex: `{ result: true, message: "message" }`' );
+        }
 
-    	result.push( getValidationResult( customResult.result, customResult.message  ) );
+        result.push( getValidationResult( customResult.result, customResult.message  ) );
     }
 
     return result;
 }
 
-Validator.prototype.swaggerValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {
+Validator.prototype.schemaInfoValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {
     var errors = [];
 
     // require( 'swagger-tools' ) causes issues so I'm commenting this section out

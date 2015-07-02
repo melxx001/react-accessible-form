@@ -30,7 +30,7 @@ var Input = React.createClass({
         disabled: React.PropTypes.bool,
         id: React.PropTypes.string,
         alt: React.PropTypes.string,
-        swagger: React.PropTypes.shape({
+        schemaInfo: React.PropTypes.shape({
             schema: React.PropTypes.object.isRequired,
             definition: React.PropTypes.string.isRequired,
         }),
@@ -40,7 +40,12 @@ var Input = React.createClass({
     getDefaultProps: function() {
         return {
             type: 'text',
-            initialValue: ''
+            initialValue: '',
+            schemaInfo: {
+                schema: {},
+                definition: ''
+            },
+            field: '' 
         };
     },
     getInitialState: function() {
@@ -51,9 +56,9 @@ var Input = React.createClass({
         };
     },
     _onChange: function( event ) {
-        var target = event.target;
+        var target = event.target; 
         var value = target.value.trim();
-        
+
         this.setState({
             value: value
         }, () => {
@@ -90,39 +95,17 @@ var Input = React.createClass({
             this._validate( this.state.value, event.target.dataset );
         }
     },
-    _getSwaggerProperties: function( schema , definition ){
-        if( !schema || !definition ){
-            return null;
-        }
-
-        var definitions = schema.definitions;
-        var properties = {};
-
-        Object.keys(definitions).map( ( def ) => {
-            if( def === definition.replace( '#/definitions/' , '' ) ){
-                properties = definitions[ def ].properties;
-            }
-        })
-
-        return properties;
-    },
     _validate: function( value, dataset ){
         var results = [];
         var messages = [];
-        var swagger = this.props.swagger;
+        var schemaInfo = this.props.schemaInfo;
 
-        if( swagger && swagger.schema && swagger.definition ){
-            if( this.props.field ){
-                let properties = this._getSwaggerProperties( swagger.schema, swagger.definition );
-                if( properties ){
-                    results = formValidation.swaggerValidate( value, this.props.field, swagger.schema, properties, swagger.definition );
-                }
-            }else{
-                console.warn( 'Warning: The property `field` must be part of this.props for swagger validation. Check if this.props.field is defined.' );
-            }
-        }else{
-            results = formValidation.validate( value, dataset, this.props.customValidation );
-        }
+        results = formValidation.validate( value, dataset, this.props.customValidation, {
+            value: value, 
+            field: this.props.field, 
+            schema: schemaInfo.schema, 
+            definition: schemaInfo.definition
+        });
 
         results.forEach(function( result ){
             if( result.error ){
@@ -203,8 +186,8 @@ var Input = React.createClass({
                     data-validate-float = { format === 'float' ? true : undefined }
                     data-validate-integer = { format === 'int32' || format === 'int64' ? true : undefined }
                     data-validate-number = { this.props.isNumber ? true : undefined }
-                    data-isvalid = { this.state.isValid }
-                    aria-invalid = { !this.state.isValid }
+                    data-is-valid = { this.state.isValid }
+                    aria-invalid = { !this.state.isValid }  // Is this correct?
                     aria-required = { this.props.required }
                     aria-describedby = { errorId }
                     max = { this.props.max }
