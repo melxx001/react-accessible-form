@@ -51,7 +51,9 @@ var Input = React.createClass({
         };
     },
     _onChange: function( event ) {
-        var value = event.target.value.trim();
+        var target = event.target;
+        var value = target.value.trim();
+        
         this.setState({
             value: value
         }, () => {
@@ -62,7 +64,7 @@ var Input = React.createClass({
 
             // Validate on onChange if explicitly set
             if( this.props.validationEvent && this.props.validationEvent.toLowerCase() === 'change' ){
-                this._validate( this.state.value, event.target.dataset );
+                this._validate( this.state.value, target.dataset );
             }
         });
     },
