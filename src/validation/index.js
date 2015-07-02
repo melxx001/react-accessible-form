@@ -2,9 +2,9 @@
 
 var validation = require( 'validator' );
 
-function getValidationResult( valid = true, message = "" ){
+function getValidationResult( valid = false, message = "" ){
     if( valid ){
-        return { error: false, message: '' };
+        return { error: false };
     }
 
     return { error: true, message: message };

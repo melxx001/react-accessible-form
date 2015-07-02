@@ -1,23 +1,5 @@
 var React = require('react');
-var { Input, Select, CheckBox, Button, Radio } = require( './FormFields' );
-
-var fields = {
-    input: function(options){
-        return <Input {...options} />
-    },
-    select: function(options){
-        return <Select {...options} />
-    },
-    checkBox: function(options){
-        return <CheckBox {...options} />
-    }/*,
-    button: function(options){
-        return <Button {...options} />
-    },
-    radio: function(options){
-        return <Radio {...options} />
-    }*/
-}
+//var Actions = require('../../areas/shared/FormValidation/FormValidationActions');
 
 var Form = React.createClass({
     propTypes: {
@@ -35,45 +17,57 @@ var Form = React.createClass({
                 id: React.PropTypes.string 
             })*/
         ]),
-        formClassName: React.PropTypes.string
+        formClassName: React.PropTypes.string,
+        method: React.PropTypes.string,
+        action: React.PropTypes.string,
+        validationEvent: React.PropTypes.string,
+        customValidation: React.PropTypes.func
     },
     getDefaultProps: function() {
         return {
-            type: 'text',
-            initialValue: ''
+            method: 'POST', 
+            action: '',
+            validationEvent: ''
         };
     },
     getInitialState: function() {
         return {
-            errors: '',
-            isValid: false
+            errors: [],
+            isValid: false,
+            isSubmitting: false
         };
     },
-    _validate: function(){
-
+    _validate: function( event ){
+        //this.props.context.executeAction(Actions.storeFormValidation, { formChildren: this.props.children, formData: event.target });
     },
-    render: function () {
-        var formItems = [];
+    _onSubmit: function( event ){
+        event.preventDefault();
 
-        if( this.props.schemaInfo && this.props.schemaInfo.schema && this.props.schemaInfo.schema ){
-            var definitions = schema.definitions;
-            Object.keys(definitions).map((form) => {
-                var properties = definitions[form].properties;
-                Object.keys(properties).map((item,i) => {
-                    var formField = properties[item];
-                    formItems.push(
-//                        <Input schema={schema} properties={properties} key={item} type={getType(formField.type, formField.format)} label={localization(item)} field={item} />
-                    );
-                });
-            });
-        }else if( this.props.formData ){
-            formItems = this.props.formData;
+        this.setState({
+            isSubmitting: true
+        });
+
+        if(this.props.validation !== 'none'){
+            this._validate(event);
         }
-
+    },
+    render: function () { 
         return (
-            <div className={this.props.formClassName}> 
-                {formItems}
-            </div>
+            <form 
+                className = { this.props.formClassName }
+                action = { this.props.action }
+                method = { this.props.method }
+                onChange = { this._onChange }
+                onSubmit = { this._onSubmit }
+                data-is-valid = { this.state.isValid }
+                data-is-submitting = { this.state.isSubmitting }
+                customValidation = { this.props.customValidation }
+                validationEvent = { this.props.validationEvent }
+            > 
+                { this.props.children }
+            </form>
         );
     }
 });
+
+module.exports = Form;
