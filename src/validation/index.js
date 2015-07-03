@@ -84,7 +84,7 @@ function getSchemaProperties( schema , definition ){
     var properties = {};
 
     Object.keys(definitions).map( ( def ) => {
-        if( def === definition.replace( '#/definitions/' , '' ) ){
+        if( def === definition.replace( '#/definitions/' , '' ) ){ 
             properties = definitions[ def ].properties;
         }
     })
@@ -163,24 +163,93 @@ Validator.prototype.validate = function( input = "", attributes = {} , customVal
         }
     }else{
         Object.keys( attributes ).forEach( function( attr ){
-            var validate = Validator.validation[ attr ];
-            if( validate ){
-                result.push( validate( input, attributes[ attr ] ) );
+            if( attr === 'validateRequired' || input ){ //If there is an input, continue validation
+                var validate = Validator.validation[ attr ];
+                if( validate ){
+                    result.push( validate( input, attributes[ attr ] ) );
+                }
             }
         }.bind( this ) );
     }
 
     // Add custom validation
-    if( customValidation ){
+    if( customValidation && input ){    // If there is an input, continue validation
         let customResult = customValidation( input );
         if( typeof customResult.result === undefined ){
             console.warn( 'Warning: custom validation does not have valid inputs. Object returned should have a result and message property. Ex: `{ result: true, message: "message" }`' );
         }
 
-        result.push( getValidationResult( customResult.result, customResult.message  ) );
+        result.push( getValidationResult( customResult.isResultValid, customResult.message  ) );
     }
 
     return result;
+}
+
+Validator.prototype.serverValidate = function( formData = {} , reactComponents = [], customFormValidation ){
+    var errors = [];
+
+    reactComponents.forEach( ( item ) => {
+        var props = item.props; 
+        if( props.name && props.validationEvent !== 'none' ){   // No need to continue if there is no name
+            let schemaInfo = props.schemaInfo || {};
+            let value = formData[ props.name ].value;
+            let dataset = formData[ props.name ].dataset;
+            let results = this.validate( value, dataset, null , {
+                value: value, 
+                field: props.field, 
+                schema: schemaInfo.schema, 
+                definition: schemaInfo.definition
+            });
+
+
+            if( results.length ){
+                let errorObj = {
+                    custom: false, 
+                    name: props.name, 
+                    id: props.id,
+                    value: value,
+                    dataset: dataset, 
+                    component: item,
+                    errors: []
+                };
+
+                results.forEach( function( result ){
+                    if( result.error ){
+                        errorObj.errors.push( result ); 
+                    }
+                });
+
+                if( errorObj.errors.length ){
+                    errors.push( errorObj )
+                }
+            }
+        }
+    });
+
+    if( customFormValidation ){
+        let customErrors = customFormValidation( formData , reactComponents ) || [];
+        if( customErrors.length ){
+            customErrors.forEach( function( custom ){
+                var errorObj = { 
+                    custom: true,
+                    name: custom.name, 
+                    id: custom.id,
+                    value: custom.value,
+                    dataset: custom.dataset, 
+                    component: custom.component,
+                    errors: []
+                };
+
+                errorObj.errors.push( custom.errors );
+
+                if( errorObj.errors.length ){
+                    errors.push( errorObj )
+                }
+            });
+        }
+    }
+
+    return errors;
 }
 
 Validator.prototype.schemaInfoValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {

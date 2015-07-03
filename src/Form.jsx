@@ -43,9 +43,9 @@ var Form = React.createClass({
     _onSubmit: function( event ){
         event.preventDefault();
 
-        this.setState({
+        /*this.setState({
             isSubmitting: true
-        });
+        });*/
 
         if(this.props.validation !== 'none'){
             this._validate(event);
