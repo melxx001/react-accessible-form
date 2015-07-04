@@ -102,7 +102,7 @@ var Input = React.createClass({
 
         results = formValidation.validate( value, dataset, this.props.customValidation, {
             value: value, 
-            field: this.props.field, 
+            field: this.props.field,
             schema: schemaInfo.schema, 
             definition: schemaInfo.definition
         });
@@ -117,6 +117,23 @@ var Input = React.createClass({
             errors: messages,
             isValid: ( messages.length === 0 ) ? true : false
         });
+    },
+    componentWillReceiveProps: function( nextProps ){
+        if( nextProps.formValidation.complete ){
+            let element = formValidation.findValidatedComponent( nextProps.formValidation.results, this.props ); 
+            let messages = [];
+
+            if( element ){
+                element.errors.forEach( function( error ){
+                    messages.push( error.message );
+                });
+            }
+
+            this.setState({
+                errors: messages,
+                isValid: ( messages.length === 0 ) ? true : false
+            });
+        }
     },
     render: function () {
         var type = this.props.type.toLowerCase();

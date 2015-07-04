@@ -94,6 +94,23 @@ var Select = React.createClass({
             isValid: ( messages.length === 0 ) ? true : false
         });
     },
+    componentWillReceiveProps: function( nextProps ){
+        if( nextProps.formValidation.complete ){
+            let element = formValidation.findValidatedComponent( nextProps.formValidation.results, this.props ); 
+            let messages = [];
+            
+            if( element ){
+                element.errors.forEach( function( error ){
+                    messages.push( error.message );
+                });
+            }
+
+            this.setState({
+                errors: messages,
+                isValid: ( messages.length === 0 ) ? true : false
+            });
+        }
+    },
     render: function () {
         var preLabel = undefined;
         var postLabel = undefined;

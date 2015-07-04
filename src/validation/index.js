@@ -185,71 +185,82 @@ Validator.prototype.validate = function( input = "", attributes = {} , customVal
     return result;
 }
 
-Validator.prototype.serverValidate = function( formData = {} , reactComponents = [], customFormValidation ){
+Validator.prototype.serverValidate = function( formData = {} , reactComponents = [], overrideFormValidation ){
     var errors = [];
 
-    reactComponents.forEach( ( item ) => {
-        var props = item.props; 
-        if( props.name && props.validationEvent !== 'none' ){   // No need to continue if there is no name
-            let schemaInfo = props.schemaInfo || {};
-            let value = formData[ props.name ].value;
-            let dataset = formData[ props.name ].dataset;
-            let results = this.validate( value, dataset, null , {
-                value: value, 
-                field: props.field, 
-                schema: schemaInfo.schema, 
-                definition: schemaInfo.definition
-            });
-
-
-            if( results.length ){
-                let errorObj = {
-                    custom: false, 
-                    name: props.name, 
-                    id: props.id,
-                    value: value,
-                    dataset: dataset, 
-                    component: item,
-                    errors: []
-                };
-
-                results.forEach( function( result ){
-                    if( result.error ){
-                        errorObj.errors.push( result ); 
-                    }
-                });
-
-                if( errorObj.errors.length ){
-                    errors.push( errorObj )
-                }
-            }
-        }
-    });
-
-    if( customFormValidation ){
-        let customErrors = customFormValidation( formData , reactComponents ) || [];
+    if( overrideFormValidation ){ 
+        let customErrors = overrideFormValidation( formData , reactComponents ) || []; 
         if( customErrors.length ){
             customErrors.forEach( function( custom ){
-                var errorObj = { 
+                var errorObj = {
                     custom: true,
                     name: custom.name, 
                     id: custom.id,
                     value: custom.value,
-                    dataset: custom.dataset, 
+                    dataset: custom.dataset,
                     component: custom.component,
                     errors: []
                 };
 
-                errorObj.errors.push( custom.errors );
+                custom.errors.forEach( function( error ){
+                    errorObj.errors.push( getValidationResult( error.isResultValid, error.message ) );
+                })
 
                 if( errorObj.errors.length ){
                     errors.push( errorObj )
                 }
             });
         }
+    }else{
+        reactComponents.forEach( ( item ) => {
+            var props = item.props; 
+            if( props.name && props.validationEvent !== 'none' ){   // No need to continue if there is no name
+                let schemaInfo = props.schemaInfo || {};
+                let value = formData[ props.name ].value;
+                let dataset = formData[ props.name ].dataset;
+                let results = this.validate( value, dataset, props.customValidation , {
+                    value: value, 
+                    field: props.field,
+                    schema: schemaInfo.schema,
+                    definition: schemaInfo.definition
+                });
+
+                if( results.length ){
+                    let errorObj = {
+                        custom: false,
+                        name: props.name,
+                        id: props.id,
+                        value: value,
+                        dataset: dataset, 
+                        component: item,
+                        errors: []
+                    };
+
+                    results.forEach( function( result ){
+                        if( result.error ){
+                            errorObj.errors.push( result ); 
+                        }
+                    });
+
+                    if( errorObj.errors.length ){
+                        errors.push( errorObj )
+                    }
+                }
+            }
+        });
     }
 
     return errors;
+}
+
+Validator.prototype.findValidatedComponent = function( formValidationResults, props ){
+    for( let i = 0, l = formValidationResults.length; i < l; i++ ){
+        if( formValidationResults[i].id === props.id || formValidationResults[i].name === props.name){
+            return formValidationResults[i];
+        }
+    }
+
+    return null;
 }
 
 Validator.prototype.schemaInfoValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {

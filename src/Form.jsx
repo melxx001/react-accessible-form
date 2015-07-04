@@ -17,11 +17,11 @@ var Form = React.createClass({
                 id: React.PropTypes.string 
             })*/
         ]),
-        formClassName: React.PropTypes.string,
-        method: React.PropTypes.string,
+        formClassName: React.PropTypes.string, 
+        method: React.PropTypes.string, 
         action: React.PropTypes.string,
         validationEvent: React.PropTypes.string,
-        customValidation: React.PropTypes.func
+        overrideValidation: React.PropTypes.func
     },
     getDefaultProps: function() {
         return {
@@ -38,33 +38,76 @@ var Form = React.createClass({
         };
     },
     _validate: function( event ){
-        //this.props.context.executeAction(Actions.storeFormValidation, { formChildren: this.props.children, formData: event.target });
+        /*this.props.context.executeAction(Actions.storeFormValidation, { 
+            formChildren: this.props.children,
+            formData: event.target,
+            overrideValidation: this.props.overrideValidation
+        });*/
     },
     _onSubmit: function( event ){
         event.preventDefault();
 
-        /*this.setState({
-            isSubmitting: true
-        });*/
+        if( this.state.isSubmitting ){
+            return;
+        }
 
-        if(this.props.validation !== 'none'){
-            this._validate(event);
+        // This is because event.target is null when
+        // doing var evt = event;
+        var evt = { target: event.target }; 
+
+        this.setState({
+            isSubmitting: true,
+            isValid: false,
+            errors: []
+        }, () => {
+            if(this.props.validation !== 'none'){ 
+                this._validate(evt);
+            }
+
+            // Run the parent onSubmit if it exists 
+            if( this.props.onSubmit ){
+                this.props.onSubmit(this);
+            }
+        });
+    },
+    _getStoreData: function(){
+        var formValidationStore = this.props.context.getStore("FormValidationStore");
+        if( formValidationStore && formValidationStore.data ){
+            return formValidationStore.data;
+        }
+
+        return null;
+    },
+    componentWillReceiveProps: function( nextProps ){
+        var formValidationStore = this._getStoreData();
+        if( formValidationStore && formValidationStore.complete ){
+            let results = formValidationStore.results;
+
+            this.setState({
+                isSubmitting: false,
+                isValid: ( results && results.length ) ? false: true,
+                errors: results 
+            });
         }
     },
-    render: function () { 
+    render: function () {
+        var formValidationStore = this._getStoreData();
+        var children = React.Children.map( this.props.children, function( child ) {
+            return React.cloneElement( child, { formValidation: formValidationStore } ); 
+        });
+
         return (
-            <form 
+            <form
+                id = { this.props.id }
                 className = { this.props.formClassName }
                 action = { this.props.action }
                 method = { this.props.method }
-                onChange = { this._onChange }
                 onSubmit = { this._onSubmit }
                 data-is-valid = { this.state.isValid }
                 data-is-submitting = { this.state.isSubmitting }
-                customValidation = { this.props.customValidation }
                 validationEvent = { this.props.validationEvent }
-            > 
-                { this.props.children }
+            >
+                { children }
             </form>
         );
     }
