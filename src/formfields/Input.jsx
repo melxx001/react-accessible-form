@@ -52,7 +52,7 @@ var Input = React.createClass({
         return {
             errors: '',
             value: this.props.initialValue,
-            isValid: this.props.initialValue ? true : false
+            isValid: true
         };
     },
     _onChange: function( event ) {
@@ -73,10 +73,22 @@ var Input = React.createClass({
             }
         });
     },
+    _onReset: function(){
+        // Run the parent onReset if it exists
+        if( this.props.onReset ){
+            this.props.onReset( this );
+        }
+
+        this.setState({
+            value: this.props.initialValue,
+            errors: [],
+            isValid: true
+        });
+    },
     _onBlur: function( event ) {
         // Run the parent onBlur if it exists
         if( this.props.onBlur ){
-            this.props.onBlur(this);
+            this.props.onBlur( this );
         }
 
         // Validate onBlur by default
@@ -87,7 +99,7 @@ var Input = React.createClass({
     _onInput: function( event ) {
         // Run the parent onInput if it exists
         if( this.props.onInput ){
-            this.props.onInput(this);
+            this.props.onInput( this );
         }
 
         // Validate on onInput if explicitly set
@@ -118,8 +130,10 @@ var Input = React.createClass({
             isValid: ( messages.length === 0 ) ? true : false
         });
     },
-    componentWillReceiveProps: function( nextProps ){
-        if( nextProps.formValidation.complete ){
+    componentWillReceiveProps: function( nextProps = {} ){
+        if( nextProps.reset ){
+            this._onReset();
+        } else if( nextProps.formValidation && nextProps.formValidation.complete ){
             let element = formValidation.findValidatedComponent( nextProps.formValidation.results, this.props ); 
             let messages = [];
 
@@ -180,7 +194,7 @@ var Input = React.createClass({
             
             this.state.errors.forEach( ( error, i ) => {    // used an arrow function to keep the context of this
                 errors.push( <span key={ 'errmessage' + i } className={ this.props.errorClassName }>{ error }</span> );
-            })
+            });
         }
 
         return (
@@ -215,6 +229,8 @@ var Input = React.createClass({
                     placeholder = { this.props.placeHolder }
                     onChange = { this._onChange }
                     onBlur = { this._onBlur }
+                    onInput = { this._onInput }
+                    onReset = { this._onReset }
                     value = { this.state.value }
                     className = { fieldClassName }
                     readOnly = { this.props.readOnly }

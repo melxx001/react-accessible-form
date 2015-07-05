@@ -1,5 +1,23 @@
 var React = require('react');
+var debug = require('debug')('react-accessible-form');
 //var Actions = require('../../areas/shared/FormValidation/FormValidationActions');
+var validator = require( './validation' );
+var formValidation = new validator();
+
+function getFormData( form = {} ){
+    var formData = {};
+
+    Object.keys( form ).forEach( ( item ) => {
+        if( form[ item ].name ){
+            formData[ form[ item ].name ] = {
+                value: form[ item ].value,
+                dataset: form[ item ].dataset
+            };
+        } 
+    }); 
+
+    return formData;
+}
 
 var Form = React.createClass({
     propTypes: {
@@ -34,66 +52,63 @@ var Form = React.createClass({
         return {
             errors: [],
             isValid: false,
-            isSubmitting: false
+            isSubmitting: false,
+            reset: false,
+            validation: {}
         };
     },
     _validate: function( event ){
-        /*this.props.context.executeAction(Actions.storeFormValidation, { 
-            formChildren: this.props.children,
-            formData: event.target,
-            overrideValidation: this.props.overrideValidation
-        });*/
+        return formValidation.serverValidate( 
+            getFormData( event.target ), 
+            this.props.children, 
+            this.props.overrideValidation 
+        );
+
     },
     _onSubmit: function( event ){
         event.preventDefault();
 
         if( this.state.isSubmitting ){
+            debug( 'Form already submitted' );
             return;
         }
 
         // This is because event.target is null when
         // doing var evt = event;
-        var evt = { target: event.target }; 
+        var evt = { target: event.target };
 
         this.setState({
             isSubmitting: true,
+            reset: false,
             isValid: false,
-            errors: []
+            errors: [],
+            validation: (this.props.validation !== 'none') ?  this._validate( event ) : {}
         }, () => {
-            if(this.props.validation !== 'none'){ 
-                this._validate(evt);
-            }
-
-            // Run the parent onSubmit if it exists 
+            // Run the parent onSubmit if it exists
             if( this.props.onSubmit ){
-                this.props.onSubmit(this);
+                debug( 'Running parent submit method' );
+                this.props.onSubmit( this );
             }
         });
     },
-    _getStoreData: function(){
-        var formValidationStore = this.props.context.getStore("FormValidationStore");
-        if( formValidationStore && formValidationStore.data ){
-            return formValidationStore.data;
-        }
-
-        return null;
-    },
-    componentWillReceiveProps: function( nextProps ){
-        var formValidationStore = this._getStoreData();
-        if( formValidationStore && formValidationStore.complete ){
-            let results = formValidationStore.results;
-
-            this.setState({
-                isSubmitting: false,
-                isValid: ( results && results.length ) ? false: true,
-                errors: results 
-            });
-        }
+    _onReset: function(){
+        this.setState({
+            isSubmitting: false,
+            isValid: false,
+            errors: [],
+            reset: true 
+        });
     },
     render: function () {
-        var formValidationStore = this._getStoreData();
-        var children = React.Children.map( this.props.children, function( child ) {
-            return React.cloneElement( child, { formValidation: formValidationStore } ); 
+        var children = React.Children.map( this.props.children, ( child ) => {
+            return React.cloneElement( child, { 
+                reset: this.state.reset, 
+                formValidation: ( this.state.reset ) ? {} : {
+                    complete: true,
+                    results: this.state.validation,
+                    status: "FormValidation ended"
+                }
+            });
         });
 
         return (
@@ -103,6 +118,7 @@ var Form = React.createClass({
                 action = { this.props.action }
                 method = { this.props.method }
                 onSubmit = { this._onSubmit }
+                onReset = { this._onReset }
                 data-is-valid = { this.state.isValid }
                 data-is-submitting = { this.state.isSubmitting }
                 validationEvent = { this.props.validationEvent }

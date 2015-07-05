@@ -253,7 +253,7 @@ Validator.prototype.serverValidate = function( formData = {} , reactComponents =
     return errors;
 }
 
-Validator.prototype.findValidatedComponent = function( formValidationResults, props ){
+Validator.prototype.findValidatedComponent = function( formValidationResults = [], props = {} ){
     for( let i = 0, l = formValidationResults.length; i < l; i++ ){
         if( formValidationResults[i].id === props.id || formValidationResults[i].name === props.name){
             return formValidationResults[i];

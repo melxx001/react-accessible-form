@@ -40,7 +40,7 @@ var Select = React.createClass({
         return {
             errors: '',
             value: this.props.initialValue,
-            isValid: this.props.initialValue ? true : false
+            isValid: true
         };
     },
     _onChange: function( event ) {
@@ -60,10 +60,22 @@ var Select = React.createClass({
             }
         });
     },
+    _onReset: function(){
+        // Run the parent onReset if it exists
+        if( this.props.onReset ){
+            this.props.onReset( this );
+        }
+
+        this.setState({
+            value: this.props.initialValue,
+            errors: [],
+            isValid: true
+        });
+    },
     _onBlur: function( event ) {
         // Run the parent onBlur if it exists
         if( this.props.onBlur ){
-            this.props.onBlur(this);
+            this.props.onBlur( this );
         }
 
         // Validate onBlur by default
@@ -94,8 +106,10 @@ var Select = React.createClass({
             isValid: ( messages.length === 0 ) ? true : false
         });
     },
-    componentWillReceiveProps: function( nextProps ){
-        if( nextProps.formValidation.complete ){
+    componentWillReceiveProps: function( nextProps ={} ){
+        if( nextProps.reset ){
+            this._onReset();
+        } else if( nextProps.formValidation && nextProps.formValidation.complete ){
             let element = formValidation.findValidatedComponent( nextProps.formValidation.results, this.props ); 
             let messages = [];
             
@@ -160,6 +174,7 @@ var Select = React.createClass({
                     aria-describedby = { errorId }
                     onChange = { this._onChange }
                     onBlur = { this._onBlur }
+                    onReset = { this._onReset }
                     className = { fieldClassName }
                     value = { this.state.value }    // Manipulation of the component's options is though value
                     disabled = { this.props.disabled }
