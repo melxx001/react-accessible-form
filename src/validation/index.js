@@ -263,6 +263,52 @@ Validator.prototype.findValidatedComponent = function( formValidationResults = [
     return null;
 }
 
+Validator.prototype.getApiValidationResults = function( json = {}, formData = {}, reactComponents = [] ){
+    var apiValidationResults = [];
+
+    reactComponents.forEach( ( item ) => {
+        var props = item.props;
+        var apiResults = json[ props.name ];
+
+        if( props.name && apiResults ){   // No need to continue if there is no name
+            let data = formData[ props.name ];
+
+            let value = ( data ) ? data.value : '';
+            let dataset = ( data ) ? data.dataset : '';
+
+            let errorObj = {
+                custom: false,
+                name: props.name,
+                id: props.id,
+                value: value,
+                dataset: dataset,
+                component: item,
+                errors: []
+            }; 
+
+            if( Array.isArray( apiResults ) ){
+                apiResults.forEach( function( res ){
+                    errorObj.errors.push({
+                        error: true,
+                        message: res
+                    });
+                });
+            }else{
+                errorObj.errors.push({
+                    error: true,
+                    message: apiResults
+                });
+            }
+
+            if( errorObj.errors.length ){
+                apiValidationResults.push( errorObj )
+            }
+        }
+    });
+
+    return apiValidationResults;
+}
+
 Validator.prototype.schemaInfoValidate = function( fieldValue = "", field = "", schema = "", propertyObj = {}, definition = "" ) {
     var errors = [];
 

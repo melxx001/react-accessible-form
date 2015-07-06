@@ -5,16 +5,21 @@ var validator = require( './validation' );
 var formValidation = new validator();
 
 function getFormData( form = {} ){
-    var formData = {};
+    var formData = {
+        postData: {},
+        formData: {}
+    };
 
     Object.keys( form ).forEach( ( item ) => {
         if( form[ item ].name ){
-            formData[ form[ item ].name ] = {
+            formData.formData[ form[ item ].name ] = {
                 value: form[ item ].value,
                 dataset: form[ item ].dataset
             };
-        } 
-    }); 
+
+            formData.postData[ form[ item ].name ] = form[ item ].value;
+        }
+    });
 
     return formData;
 }
@@ -57,11 +62,11 @@ var Form = React.createClass({
             validation: {}
         };
     },
-    _validate: function( event ){
-        return formValidation.serverValidate( 
-            getFormData( event.target ), 
+    _validate: function( event = { target: {} } ){
+        return formValidation.serverValidate(
+            getFormData( event.target ).formData,
             this.props.children, 
-            this.props.overrideValidation 
+            this.props.overrideValidation
         );
 
     },
