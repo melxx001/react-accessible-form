@@ -1,5 +1,5 @@
 var React = require( 'react' )
-var { Form, Input, Select, CheckBox, Button, Radio } = require( './FormFields' );
+var { Form, Input, Select, CheckBox, Button, TextArea ,Radio } = require( './FormFields' );
 var swagger = {
 	schema: require( '../example/data/Index.json' ),
 	definition: '#/definitions/Expenses'		
@@ -51,6 +51,16 @@ var Component = React.createClass({
         		label="customvalidation"
         		customValidation={this._validate}
         	/>
+            <TextArea 
+                id="id-22"
+                name="type19"
+                label="TextArea" 
+                maxLength={10} 
+                required={true} 
+                rows={5} 
+                cols={20} 
+                placeHolder="Field Required. Max 10 characters"
+            />
             <Button id="id-18" value="Button1"  disabled={true} />
             <Button id="id-19" value="submit" type="submit" />
             <Button id="id-20" value="reset" type="reset" />

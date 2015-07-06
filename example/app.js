@@ -11,6 +11,10 @@ var server = express()
     explicitArray: false,
     mergeAttrs: true
 })*/
+process.on('uncaughtException', function (err) {
+  console.log(err.stack);
+});
+
 server.use(express.static(__dirname + '/public'))
 server.set('views', __dirname + '/views')
 server.set('view engine', 'jsx')

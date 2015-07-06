@@ -3,6 +3,7 @@ module.exports = {
 	Input: require( './formfields/Input' ),
 	Select: require( './formfields/Select' ),
 	CheckBox: require( './formfields/CheckBox' ),
-	Button: require( './formfields/Button' ),
+    Button: require( './formfields/Button' ),
+	TextArea: require( './formfields/TextArea' ),
 	Radio: require( './formfields/Radio' )
 };
