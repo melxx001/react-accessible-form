@@ -1,5 +1,7 @@
 var React = require('react');
 var debug = require('debug')('react-accessible-form');
+var http = require( 'http' );
+var url = require( 'url' );
 //var Actions = require('../../areas/shared/FormValidation/FormValidationActions');
 var validator = require( './validation' );
 var formValidation = new validator();
@@ -63,11 +65,45 @@ var Form = React.createClass({
         };
     },
     _validate: function( event = { target: {} } ){
-        return formValidation.serverValidate(
-            getFormData( event.target ).formData,
+        var data = getFormData( event.target );
+        var reactComponents = this.props.children;
+        var validationResults = formValidation.serverValidate(
+            data.formData,
             this.props.children, 
             this.props.overrideValidation
         );
+
+        if( validationResults.length ){
+            return validationResults;
+        }else if( this.props.action ){
+            // Api call
+            var urlData = url.parse(this.props.action);
+            var _this = this;
+            var post_req = http.request({
+                method: this.props.method || "POST",
+                hostname: urlData.action,
+                port: urlData.port,
+                path: urlData.path,
+                protocol: urlData.protocol
+            }, function (response) {
+                var str = '';
+                response.on('data', function (chunk) {
+                    str += chunk;
+                });
+
+                response.on('end', function () {
+                    var json = JSON.parse( str );
+                    _this.setState({
+                        validation: formValidation.getApiValidationResults( json, data.formData, reactComponents )
+                    });
+                });
+                
+            });
+
+            post_req.write(data.postData);
+            post_req.end();
+            return {};
+        }
 
     },
     _onSubmit: function( event ){

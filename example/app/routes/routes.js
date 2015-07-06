@@ -27,10 +27,18 @@ module.exports = function(app) {
 	    res.render('BuildJSONSchemaForm', {content: html,  title: "Build form from JSON Schema with regular validation" })
 	})
 
-	app.get('/test4', function(req, res){
-		var App = require('../../build/components/Index')
-		var html = React.renderToStaticMarkup(React.createElement(App))
-	    res.render('Index', {content: html,  title: "Testing" })
+    app.get('/test4', function(req, res){
+        var App = require('../../build/components/Index')
+        var html = React.renderToStaticMarkup(React.createElement(App))
+        res.render('Index', {content: html,  title: "Testing" })
+    })
+
+	app.get('/formApiTest', function(req, res){
+        res.json( require( '../../data/formApiTest.json' ) )
+    })
+
+    app.post('/formApiTest', function(req, res){
+	    res.json( require( '../../data/formApiTest.json' ) )
 	})
 
 	/*app.get('/test4', function(req, res){

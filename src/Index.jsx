@@ -24,7 +24,7 @@ var Component = React.createClass({
   },
   render: function() {
     return (
-    	<Form> 
+    	<Form action="/formApiTest"> 
         	<Input name="type1" required={true} minLength={3} maxLength={10} validationEvent="blur" onChange={this._onChange} preLabel="Expense Type1" id="id-1" />
         	<Input name="type2" minLength={10} onChange={this._onChange} preLabel="Expense Type2" id="id-2" />
         	<Input name="type3" minLength={10} validationEvent="change" postLabel="Expense Type3" id="id-3" />
