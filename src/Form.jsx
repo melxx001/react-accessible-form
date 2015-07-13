@@ -26,6 +26,34 @@ function getFormData( form = {} ){
     return formData;
 }
 
+function getAllChildren ( element ){
+    if ( element && element.props && element.props.children ){
+        return getAllChildren( element.props.children );
+    }else if( Array.isArray( element ) ){
+        let arr = element.map( function( item ){
+            if ( item && item.props && item.props.children ){
+                return getAllChildren( item.props.children );
+            }
+
+            return item;
+        });
+
+        return arr;
+    }
+
+    return element;
+}
+
+function flattenArray ( arr ){
+    if( Array.isArray( arr ) ){
+        return arr.reduce(
+            (a, b) => a.concat( Array.isArray(b) ? flattenArray(b) : b ), []
+        );
+    }
+
+    return arr;
+}
+
 var Form = React.createClass({
     propTypes: {
         schemaInfo: React.PropTypes.shape({
@@ -46,6 +74,7 @@ var Form = React.createClass({
         method: React.PropTypes.string, 
         action: React.PropTypes.string,
         validationEvent: React.PropTypes.string,
+        customValidation: React.PropTypes.func,
         overrideValidation: React.PropTypes.func
     },
     getDefaultProps: function() {
@@ -66,10 +95,11 @@ var Form = React.createClass({
     },
     _validate: function( event = { target: {} } ){
         var data = getFormData( event.target );
-        var reactComponents = this.props.children;
+        var reactComponents = getAllChildren( this.props.children );
         var validationResults = formValidation.serverValidate(
             data.formData,
-            this.props.children, 
+            reactComponents, 
+            this.props.customValidation,
             this.props.overrideValidation
         );
 
@@ -141,7 +171,7 @@ var Form = React.createClass({
         });
     },
     render: function () {
-        var children = React.Children.map( this.props.children, ( child ) => {
+        var children = React.Children.map( getAllChildren( this.props.children ), ( child ) => {
             return React.cloneElement( child, { 
                 reset: this.state.reset, 
                 formValidation: ( this.state.reset ) ? {} : {

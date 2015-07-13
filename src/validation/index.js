@@ -185,7 +185,7 @@ Validator.prototype.validate = function( input = "", attributes = {} , customVal
     return result;
 }
 
-Validator.prototype.serverValidate = function( formData = {} , reactComponents = [], overrideFormValidation ){
+Validator.prototype.serverValidate = function( formData = {} , reactComponents = [], customFormValidation, overrideFormValidation ){
     var errors = [];
 
     if( overrideFormValidation ){ 
@@ -248,6 +248,32 @@ Validator.prototype.serverValidate = function( formData = {} , reactComponents =
                 }
             }
         });
+    }
+
+    if( customFormValidation ){
+        let customErrors = customFormValidation( formData , reactComponents ) || []; 
+        if( customErrors.length ){
+            customErrors.forEach( function( custom ){
+                var errorObj = {
+                    override: false,
+                    custom: true,
+                    name: custom.name, 
+                    id: custom.id,
+                    value: custom.value,
+                    dataset: custom.dataset,
+                    component: custom.component,
+                    errors: []
+                };
+
+                custom.errors.forEach( function( error ){
+                    errorObj.errors.push( formValidation.getValidationResult( error.isResultValid, error.message ) );
+                })
+
+                if( errorObj.errors.length ){
+                    errors.push( errorObj )
+                }
+            });
+        }
     }
 
     return errors;
